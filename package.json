@@ -1,0 +1,35 @@
+{
+  "name": "alexa-skill-test-framework",
+  "displayName": "Alexa Skill Test Framework",
+  "version": "1.0.0",
+  "description": "Framework for easy offline black-box testing of Alexa skills.",
+  "keywords": [
+    "alexa",
+    "amazon",
+    "test",
+    "offline",
+    "mocha",
+    "black box",
+    "black-box"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Brian MacIntosh",
+    "email": "brianamacintosh@gmail.com",
+    "url": "http://brianmacintosh.com/"
+  },
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "assertion-error": "^1.0.2",
+    "aws-lambda-mock-context": "^3.0.1"
+  },
+  "optionalDependencies": {
+    "i18next": "^7.0.0",
+    "i18next-sprintf-postprocessor": "^0.2.2"
+  },
+  "peerDependencies": {
+    "mocha": "^3.2.0"
+  }
+}
