@@ -12,6 +12,7 @@ For some simple examples, see the 'examples' directory.
 ## alexaTest.initialize(index, version, appId, userId)
 Initializes the test framework. Must be called before generating requests or running any tests.
 * `index`: The object containing your skill's 'handler' method. Must define a method called `handler(event, context, callback)`, which runs the skill.
+  * The test framework passes 'true' as a fourth parameter to the handler. Obviously this should be used sparingly, if at all.
 * `version`: A string representing the version of the skill to use. //TODO: test
 * `appId`: The Skill's app ID. Looks like "amzn1.ask.skill.00000000-0000-0000-0000-000000000000".
 * `userId`: The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING".
@@ -49,7 +50,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
 Forwards the request to `alexaTest.i18n.t` and returns the result. You must have called `alexaTest.initializeI18N` previously.
 
 # Note About DynamoDB
-//TODO:
+If your skill uses the [Alexa Skills Kit for Node.js][nodekit] and uses its built-in DynamoDB persistence, it may be desireable not to connect to the database during testing, since the ASK Node kit uses it to persist session attributes. For that case, the framework passes a fourth parameter of `true` to the `handler` function, which you can conditionalize on to disable the database connection.
 
 [sessionendedrequest docs]: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/custom-standard-request-types-reference#sessionendedrequest
 [response examples]: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interface-reference#response-examples
+[nodekit]: https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs
