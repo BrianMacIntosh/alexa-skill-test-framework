@@ -10,8 +10,9 @@ module.exports = {
 	/**
 	 * Initializes necessary values before using the test framework.
 	 * @param {object} index The object containing your skill's 'handler' method.
+	 * @param {string} version The version of the skill to run. //TODO: test
 	 * @param {string} appId The Skill's app ID. Looks like "amzn1.ask.skill.00000000-0000-0000-0000-000000000000".
-	 * @param {string} userId The user's Amazon User ID. Looks like "amzn1.ask.account.LONG_STRING"
+	 * @param {string} userId The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING"
 	 */
 	initialize: function(index, version, appId, userId)
 	{
@@ -66,10 +67,10 @@ module.exports = {
 
 	/**
 	 * Generates an intent request object.
-	 * @param {string} intent The name of the intent to call.
+	 * @param {string} intentName The name of the intent to call.
 	 * @param {object} slots Slot data to call the intent with.
 	 */
-	getIntentRequest: function(intent, slots)
+	getIntentRequest: function(intentName, slots)
 	{
 		if (!slots)
 		{
@@ -90,17 +91,17 @@ module.exports = {
 				"requestId": "EdwRequestId.00000000-0000-0000-0000-000000000000", //TODO: randomize
 				"timestamp": new Date().toISOString(),
 				"locale": this.locale,
-				"intent": { "name": intent, "slots": slots }
+				"intent": { "name": intentName, "slots": slots }
 			},
 		};
 	},
 
 	/**
-	 * Generates a sesson end request object.
+	 * Generates a sesson ended request object.
 	 * @param {string} reason The reason the session was ended.
 	 * @see https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/custom-standard-request-types-reference#sessionendedrequest
 	 */
-	getSessionEndRequest: function(reason)
+	getSessionEndedRequest: function(reason)
 	{
 		return {
 			"version": this.version,
@@ -195,6 +196,13 @@ module.exports = {
 										name: "AssertionError",
 										expected: "the response does not end the session", actual: "the response ended the session"
 									});
+							}
+
+							// custom checks
+							//TODO: test
+							if (currentItem.callback)
+							{
+								currentItem.callback(response);
 							}
 
 							run(handler, sequenceIndex + 1, response.sessionAttributes);

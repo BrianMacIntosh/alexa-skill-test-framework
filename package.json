@@ -6,11 +6,13 @@
   "keywords": [
     "alexa",
     "amazon",
+    "echo",
     "test",
     "offline",
     "mocha",
     "black box",
-    "black-box"
+    "black-box",
+    "coverage"
   ],
   "license": "MIT",
   "author": {
@@ -21,6 +23,9 @@
   "files": [
     "index.js"
   ],
+  "directories": {
+    "example": "./examples"
+  },
   "dependencies": {
     "assertion-error": "^1.0.2",
     "aws-lambda-mock-context": "^3.0.1"
