@@ -31,5 +31,10 @@
   },
   "peerDependencies": {
     "mocha": "^3.2.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/BrianMacIntosh/alexa-skill-test-framework/issues",
+    "email": "brianamacintosh@gmail.com"
+  },
+  "repository": "BrianMacIntosh/alexa-skill-test-framework"
 }
