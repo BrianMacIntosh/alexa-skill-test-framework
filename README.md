@@ -57,6 +57,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
   * `says`: Optional String. Tests that the speech output from the request is the string specified.
   * `saysNothing`: Optional Boolean. If true, tests that the response has no speech output.
+  * `reprompts`: Optional String. Tests that the reprompt output from the request is the string specified.
+  * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
   * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
   * `saysCallback(context, speech)`: Optional Function. Recieves the speech from the response as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
   * `callback(context, response)`: Optional Function. Recieves the [response][response examples] object from the request as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.

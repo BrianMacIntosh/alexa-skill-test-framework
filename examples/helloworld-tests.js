@@ -22,7 +22,10 @@ describe("Hello World Skill", function()
 	describe("LaunchRequest", function()
 	{
 		alexaTest.test([
-			{ request: alexaTest.getLaunchRequest(), says: "Hello World!", shouldEndSession: true }
+			{
+				request: alexaTest.getLaunchRequest(),
+				says: "Hello World!", repromptsNothing: true, shouldEndSession: true
+			}
 		]);
 	});
 
@@ -30,7 +33,10 @@ describe("Hello World Skill", function()
 	describe("HelloWorldIntent", function()
 	{
 		alexaTest.test([
-			{ request: alexaTest.getIntentRequest("HelloWorldIntent"), says: "Hello World!", shouldEndSession: true }
+			{
+				request: alexaTest.getIntentRequest("HelloWorldIntent"),
+				says: "Hello World!", repromptsNothing: true, shouldEndSession: true
+			}
 		]);
 	});
 });

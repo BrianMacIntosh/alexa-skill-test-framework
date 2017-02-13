@@ -155,6 +155,8 @@ module.exports = {
 	 * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
 	 * `says`: Optional String. Tests that the speech output from the request is the string specified.
 	 * `saysNothing`: Optional Boolean. If true, tests that the response has no speech output.
+	 * `reprompts`: Optional String. Tests that the reprompt output from the request is the string specified.
+	 * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
 	 * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
@@ -194,29 +196,26 @@ module.exports = {
 							//TODO: null checks
 
 							var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
+							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
 							
 							// check the returned speech
 							if (currentItem.says !== undefined)
 							{
 								var expected = "<speak> " + currentItem.says + " </speak>";
-								if (expected != actualSay)
-								{
-									context.assert(
-										{
-											message: "the response did not return the correct speech",
-											expected: expected, actual: actualSay ? actualSay : String(actualSay),
-											operator: "==", showDiff: true
-										});
-								}
+								self._assertStringEqual(context, "speech", actualSay, expected);
 							}
-							if (currentItem.saysNothing && actualSay)
+							if (currentItem.saysNothing)
 							{
-								context.assert(
-									{
-										message: "the response did not return the correct speech",
-										expected: "undefined", actual: actualSay ? actualSay : String(actualSay),
-										operator: "==", showDiff: true
-									});
+								self._assertStringMissing(context, "speech", actualSay);
+							}
+							if (currentItem.reprompts !== undefined)
+							{
+								var expected = "<speak> " + currentItem.reprompts + " </speak>";
+								self._assertStringEqual(context, "reprompt", actualReprompt, expected);
+							}
+							if (currentItem.repromptsNothing)
+							{
+								self._assertStringMissing(context, "reprompt", actualReprompt);
 							}
 
 							// check the shouldEndSession flag
@@ -265,6 +264,38 @@ module.exports = {
 	{
 		if (!this.i18n) throw "i18n is not initialized. You must call 'initializeI18N' before calling 't'.";
 		return this.i18n.t.apply(this.i18n, arguments);
+	},
+
+	/**
+	 * Internal method. Asserts if the strings are not equal.
+	 */
+	_assertStringEqual: function(context, name, actual, expected)
+	{
+		if (expected != actual)
+		{
+			context.assert(
+				{
+					message: "the response did not return the correct " + name + " value",
+					expected: expected, actual: actual ? actual : String(actual),
+					operator: "==", showDiff: true
+				});
+		}
+	},
+
+	/**
+	 * Internal method. Asserts if the string exists.
+	 */
+	_assertStringMissing: function(context, name, actual)
+	{
+		if (actual)
+		{
+			context.assert(
+			{
+				message: "the response unexpectedly returned a " + name + " value",
+				expected: "undefined", actual: actual ? actual : String(actual),
+				operator: "==", showDiff: true
+			});
+		}
 	},
 
 	/**
