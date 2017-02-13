@@ -3,7 +3,7 @@
 This framework makes it easy to create full-coverage black box tests for an Alexa skill using [Mocha](https://mochajs.org/).
 
 ## How To
-Install the package as a dev dependency with `npm install alexa-skill-test-framework --save-dev`. //TODO: add to npm
+Install the package as a dev dependency with `npm install alexa-skill-test-framework --save-dev`.
 
 Write tests in a Javascript file and run them with Mocha. For example, if your test is at 'test/index.js', run `mocha test/index.js`.
 
