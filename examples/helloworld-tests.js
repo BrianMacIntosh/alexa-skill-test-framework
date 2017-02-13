@@ -7,10 +7,14 @@ Run with 'mocha helloworld-tests.js'.
 */
 
 // include the testing framework
-const alexaTest = require('alexa-skill-test-framework');
+//const alexaTest = require('alexa-skill-test-framework');
+const alexaTest = require('../index');
 
 // initialize the testing framework
-alexaTest.initialize(require('./helloworld.js'), "1.0", "amzn1.ask.skill.00000000-0000-0000-0000-000000000000", "amzn1.ask.account.VOID");
+alexaTest.initialize(
+	require('./helloworld.js'),
+	"amzn1.ask.skill.00000000-0000-0000-0000-000000000000",
+	"amzn1.ask.account.VOID");
 
 describe("Hello World Skill", function()
 {

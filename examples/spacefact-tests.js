@@ -7,34 +7,53 @@ Run with 'mocha helloworld-tests.js'.
 */
 
 // include the testing framework
-const alexaTest = require('alexa-skill-test-framework');
+//const alexaTest = require('alexa-skill-test-framework');
+const alexaTest = require('../index');
 
 // initialize the testing framework
-alexaTest.initialize(require('./spacefact.js'), "1.0", "amzn1.ask.skill.00000000-0000-0000-0000-000000000000", "amzn1.ask.account.VOID");
+alexaTest.initialize(
+	require('./spacefact.js'),
+	"amzn1.ask.skill.00000000-0000-0000-0000-000000000000",
+	"amzn1.ask.account.VOID");
 
 // initialize i18n
-alexaTest.initializeI18N(require("./spacefact-language"));
+var textResources = require("./spacefact-language");
+alexaTest.initializeI18N(textResources);
 
-//TODO: Test Facts
 //TODO: Test reprompt strings
 //TODO: test cards?
 
 var supportedLocales = [ "en-US", "en-GB", "de-DE" ];
 
-// perform all the tests in each supported language
+// perform each test in each supported language
 for (var i = 0; i < supportedLocales.length; i++)
 {
-	// set the language
-	//TODO: will not work if the skill really performs asynchronously
-	alexaTest.setLocale(supportedLocales[i]);
+	var locale = supportedLocales[i];
 
-	describe("Space Fact Skill (" + supportedLocales[i] + ")", function()
+	// set the language
+	alexaTest.setLocale(locale);
+
+	// callback function that asserts if the provided string is not a fact from the list
+	var assertIfNotFact = function(context, suspectedFact)
+	{
+		var facts = context.t("FACTS");
+		for (var i = 0; i < facts.length; i++)
+		{
+			if (suspectedFact === "<speak> " + context.t("GET_FACT_MESSAGE") + facts[i] + " </speak>") return;
+		}
+		context.assert({ message: "'" + suspectedFact + "' is not a space fact." });
+	}
+
+	describe("Space Fact Skill (" + locale + ")", function()
 	{
 		// tests the behavior of the skill's LaunchRequest
 		describe("LaunchRequest", function()
 		{
 			alexaTest.test([
-				{ request: alexaTest.getLaunchRequest(), shouldEndSession: true }
+				{
+					request: alexaTest.getLaunchRequest(), shouldEndSession: true,
+					saysCallback: assertIfNotFact
+				}
 			]);
 		});
 
@@ -42,7 +61,10 @@ for (var i = 0; i < supportedLocales.length; i++)
 		describe("GetNewFactIntent", function()
 		{
 			alexaTest.test([
-				{ request: alexaTest.getIntentRequest("GetNewFactIntent"), shouldEndSession: true }
+				{
+					request: alexaTest.getIntentRequest("GetNewFactIntent"), shouldEndSession: true,
+					saysCallback: assertIfNotFact
+				}
 			]);
 		});
 
@@ -51,7 +73,10 @@ for (var i = 0; i < supportedLocales.length; i++)
 		{
 			alexaTest.test([
 				{ request: alexaTest.getIntentRequest("AMAZON.HelpIntent"), says: alexaTest.t("HELP_MESSAGE"), shouldEndSession: false },
-				{ request: alexaTest.getIntentRequest("GetNewFactIntent"), shouldEndSession: true }
+				{
+					request: alexaTest.getIntentRequest("GetNewFactIntent"), shouldEndSession: true,
+					saysCallback: assertIfNotFact
+				}
 			]);
 		});
 		describe("AMAZON.HelpIntent into AMAZON.StopIntent", function()
