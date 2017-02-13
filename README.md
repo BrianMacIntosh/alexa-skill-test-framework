@@ -4,7 +4,7 @@ This framework makes it easy to create full-coverage black box tests for an Alex
 
 Here's an example of what a test might look like with the test framework.
 ``` Javascript
-describe("AMAZON.HelpIntent into AMAZON.StopIntent", function(){
+describe("AMAZON.HelpIntent into AMAZON.CancelIntent", function(){
   alexaTest.test([
     { request: alexaTest.getIntentRequest("AMAZON.HelpIntent"), says: alexaTest.t("HELP_MESSAGE"), shouldEndSession: false },
     { request: alexaTest.getIntentRequest("AMAZON.CancelIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }

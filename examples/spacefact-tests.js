@@ -76,11 +76,18 @@ for (var i = 0; i < supportedLocales.length; i++)
 				}
 			]);
 		});
-		describe("AMAZON.HelpIntent into AMAZON.StopIntent", function()
+		describe("AMAZON.HelpIntent into AMAZON.CancelIntent", function()
 		{
 			alexaTest.test([
 				{ request: alexaTest.getIntentRequest("AMAZON.HelpIntent"), says: alexaTest.t("HELP_MESSAGE"), shouldEndSession: false },
 				{ request: alexaTest.getIntentRequest("AMAZON.CancelIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }
+			]);
+		});
+		describe("AMAZON.HelpIntent into AMAZON.StopIntent", function()
+		{
+			alexaTest.test([
+				{ request: alexaTest.getIntentRequest("AMAZON.HelpIntent"), says: alexaTest.t("HELP_MESSAGE"), shouldEndSession: false },
+				{ request: alexaTest.getIntentRequest("AMAZON.StopIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }
 			]);
 		});
 
@@ -93,10 +100,10 @@ for (var i = 0; i < supportedLocales.length; i++)
 		});
 
 		// tests the behavior of the skill's AMAZON.StopIntent
-		describe("AMAZON.CancelIntent", function()
+		describe("AMAZON.StopIntent", function()
 		{
 			alexaTest.test([
-				{ request: alexaTest.getIntentRequest("AMAZON.CancelIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }
+				{ request: alexaTest.getIntentRequest("AMAZON.StopIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }
 			]);
 		});
 	});
