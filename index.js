@@ -3,8 +3,6 @@ const awsContext = require('aws-lambda-mock-context');
 const AssertionError = require('assertion-error');
 const uuid = require('node-uuid');
 
-//TODO: newsession stuff?
-
 CallbackContext = function(framework, sequenceIndex, locale, requestType)
 {
 	this.framework = framework;
@@ -246,7 +244,6 @@ module.exports = {
 							{
 								currentItem.saysCallback(context, actualSay);
 							}
-							//TODO: test
 							if (currentItem.callback)
 							{
 								currentItem.callback(context, response);

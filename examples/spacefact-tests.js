@@ -20,9 +20,6 @@ alexaTest.initialize(
 var textResources = require("./spacefact-language");
 alexaTest.initializeI18N(textResources);
 
-//TODO: Test reprompt strings
-//TODO: test cards?
-
 var supportedLocales = [ "en-US", "en-GB", "de-DE" ];
 
 // perform each test in each supported language
