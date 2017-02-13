@@ -2,6 +2,16 @@
 
 This framework makes it easy to create full-coverage black box tests for an Alexa skill using [Mocha](https://mochajs.org/).
 
+Here's an example of what a test might look like with the test framework.
+``` Javascript
+describe("AMAZON.HelpIntent into AMAZON.StopIntent", function(){
+  alexaTest.test([
+    { request: alexaTest.getIntentRequest("AMAZON.HelpIntent"), says: alexaTest.t("HELP_MESSAGE"), shouldEndSession: false },
+    { request: alexaTest.getIntentRequest("AMAZON.CancelIntent"), says: alexaTest.t("STOP_MESSAGE"), shouldEndSession: true }
+  ]);
+});
+```
+
 ## How To
 Install the package as a dev dependency with `npm install alexa-skill-test-framework --save-dev`.
 
