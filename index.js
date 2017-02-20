@@ -37,7 +37,7 @@ CallbackContext.prototype.assert = function(data)
 
 module.exports = {
 
-	locale: "en",
+	locale: "en-US",
 	version: "1.0",
 
 	/**

@@ -33,7 +33,7 @@ Initializes i18n. You only need this if you use i18n in your skill, and you want
 * `resources`: The same resource object you pass to i18n inside your skill.
 
 ### alexaTest.setLocale(locale)
-Changes the locale used by the test framework and the skill. Default is 'en'.
+Changes the locale used by the test framework and the skill. Default is 'en-US'.
 * `locale`: A string representing the locale to use.
 
 ### alexaTest.getLaunchRequest([locale])
