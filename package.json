@@ -1,7 +1,7 @@
 {
   "name": "alexa-skill-test-framework",
   "displayName": "Alexa Skill Test Framework",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Framework for easy offline black-box testing of Alexa skills.",
   "keywords": [
     "alexa",
