@@ -36,6 +36,12 @@ Initializes i18n. You only need this if you use i18n in your skill, and you want
 Changes the locale used by the test framework and the skill. Default is 'en-US'.
 * `locale`: A string representing the locale to use.
 
+### alexaTest.setExtraFeature(key, state)
+Enables or disabled an optional test feature. Current features are:
+  * `questionMarkCheck`: Checks that responses that end the session do not contain question marks, and responses that keep the session open do.
+* `key`: The key of the feature to change.
+* `state`: Whether the feature should be enabled or disabled.
+
 ### alexaTest.getLaunchRequest([locale])
 Returns a [LaunchRequest][launchrequest docs]. The request can be passed to `test` (see below).
 * `locale`: Optionally, an override locale for the request.

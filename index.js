@@ -35,10 +35,52 @@ CallbackContext.prototype.assert = function(data)
 	this.framework._assert(this.sequenceIndex, this.requestType, data);
 }
 
+/**
+ * Performs the questionMarkCheck on the response, and asserts if it fails.
+ */
+CallbackContext.prototype._questionMarkCheck = function(response)
+{
+	var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
+
+	var hasQuestionMark = false;
+	for (var i = 0; actualSay && i < actualSay.length; i++)
+	{
+		var c = actualSay[i];
+		if (c == '?' || c == '\u055E' || c == '\u061F' || c == '\u2E2E' || c == '\uFF1F')
+		{
+			hasQuestionMark = true;
+			break;
+		}
+	}
+	if (response.response.shouldEndSession && hasQuestionMark)
+	{
+		this.assert(
+			{
+				message: "Possible Certification Problem: The response ends the session but contains a question mark."
+			});
+	}
+	if (!response.response.shouldEndSession && !hasQuestionMark)
+	{
+		this.assert(
+			{
+				message: "Possible Certification Problem: The response keeps the session open but does not contain a question mark."
+			});
+	}
+}
+
 module.exports = {
 
 	locale: "en-US",
 	version: "1.0",
+
+	//TODO: allow these to be enabled or disabled on a per-request basis
+	extraFeatures: {
+		/**
+		 * If set, responses that end with question marks must not end the session,
+		 * and those without question marks must end the session.
+		 */
+		questionMarkCheck: true,
+	},
 
 	/**
 	 * Initializes necessary values before using the test framework.
@@ -78,6 +120,20 @@ module.exports = {
 		if (!locale) throw "'locale' argument must be provided.";
 		this.locale = locale;
 		if (this.i18n) this.i18n.changeLanguage(this.locale);
+	},
+
+	/**
+	 * Enables or disables an optional testing feature.
+	 * @param {string} key The key of the feature to enable.
+	 * @param {boolean} enabled Whether the feature should be enabled.
+	 */
+	setExtraFeature: function(key, enabled)
+	{
+		if (this.extraFeatures[key] === undefined)
+		{
+			throw "Framework has no feature with key '" + key + "'.";
+		}
+		this.extraFeatures[key] = !!enabled;
 	},
 
 	/**
@@ -246,6 +302,12 @@ module.exports = {
 							if (currentItem.callback)
 							{
 								currentItem.callback(context, response);
+							}
+
+							// extra checks
+							if (self.extraFeatures.questionMarkCheck)
+							{
+								context._questionMarkCheck(response);
 							}
 
 							run(handler, sequenceIndex + 1, response.sessionAttributes);
