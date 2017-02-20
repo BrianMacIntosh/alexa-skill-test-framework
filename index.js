@@ -1,7 +1,7 @@
 
 const awsContext = require('aws-lambda-mock-context');
 const AssertionError = require('assertion-error');
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 
 CallbackContext = function(framework, sequenceIndex, locale, requestType)
 {

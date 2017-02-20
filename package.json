@@ -29,7 +29,7 @@
   "dependencies": {
     "assertion-error": "^1.0.2",
     "aws-lambda-mock-context": "^3.0.1",
-    "node-uuid": "^1.4.3"
+    "uuid": "^3.0.1"
   },
   "optionalDependencies": {
     "i18next": "^7.0.0",
