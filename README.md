@@ -21,7 +21,7 @@ For some simple examples, see the 'examples' directory.
 
 ## Test Framework Documentation
 
-### alexaTest.initialize(index, version, appId, userId)
+### alexaTest.initialize(index, appId, userId)
 Initializes the test framework. Must be called before generating requests or running any tests.
 * `index`: The object containing your skill's 'handler' method. Must define a method called `handler(event, context, callback)`, which runs the skill.
   * The test framework passes 'true' as a fourth parameter to the handler. Obviously this should be used sparingly, if at all.
