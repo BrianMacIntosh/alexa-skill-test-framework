@@ -21,7 +21,8 @@
     "url": "http://brianmacintosh.com/"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "examples"
   ],
   "directories": {
     "example": "./examples"
