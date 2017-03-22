@@ -255,6 +255,10 @@ module.exports = {
 						.then(response => {
 							//TODO: null checks
 
+							if (response.toJSON) {
+								response = response.toJSON();
+							}
+
 							var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
 							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
 
