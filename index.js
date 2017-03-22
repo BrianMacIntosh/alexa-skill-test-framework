@@ -238,7 +238,7 @@ module.exports = {
 				{
 					var ctx = awsContext();
 					var currentItem = sequence[sequenceIndex];
-					
+
 					var request = currentItem.request;
 					request.session.attributes = attributes || {};
 					handler(request, ctx, undefined, true);
@@ -251,9 +251,13 @@ module.exports = {
 						.then(response => {
 							//TODO: null checks
 
+							if (response.toJSON) {
+								response = response.toJSON();
+							}
+
 							var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
 							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
-							
+
 							// check the returned speech
 							if (currentItem.says !== undefined)
 							{
@@ -374,7 +378,7 @@ module.exports = {
 
 		// the message has information that should be displayed by the test runner
 		data.generatedMessage = false;
-		
+
 		data.name = "AssertionError";
 		throw new AssertionError(message, data);
 	},
