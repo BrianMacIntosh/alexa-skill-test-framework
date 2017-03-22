@@ -3,12 +3,12 @@
 Mocha tests for the Alexa skill "Space Facts" example (https://github.com/alexa/skill-sample-nodejs-fact).
 Using the Alexa Skill Test Framework (https://github.com/BrianMacIntosh/alexa-skill-test-framework).
 
-Run with 'mocha helloworld-tests.js'.
+Run with 'mocha examples/skill-sample-nodejs-fact/spacefact-tests.js'.
 */
 
 // include the testing framework
 //const alexaTest = require('alexa-skill-test-framework');
-const alexaTest = require('../index');
+const alexaTest = require('../../index');
 
 // initialize the testing framework
 alexaTest.initialize(
