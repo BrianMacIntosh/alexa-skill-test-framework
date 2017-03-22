@@ -388,7 +388,7 @@ module.exports = {
 				"sessionId": "SessionId.00000000-0000-0000-0000-000000000000", //TODO: randomize
 				"application": { "applicationId": this.appId },
 				"attributes": {},
-				"user": { "userId": this.appId },
+				"user": { "userId": this.userId },
 				"new": true
 			};
 	}
