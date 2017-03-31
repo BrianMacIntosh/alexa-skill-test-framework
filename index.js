@@ -240,6 +240,7 @@ module.exports = {
 					var currentItem = sequence[sequenceIndex];
 
 					var request = currentItem.request;
+                    request.session.new = sequenceIndex === 0;
 					request.session.attributes = attributes || {};
 					var callback = function(err, result) {
 						if (err) return ctx.fail(err);
