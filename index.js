@@ -241,7 +241,11 @@ module.exports = {
 
 					var request = currentItem.request;
                     request.session.new = sequenceIndex === 0;
-					request.session.attributes = attributes || {};
+                    if (attributes) {
+                        request.session.attributes = JSON.parse(JSON.stringify(attributes));
+                    } else {
+					request.session.attributes =  {};
+                    }
 					var callback = function(err, result) {
 						if (err) return ctx.fail(err);
 						return ctx.succeed(result);
