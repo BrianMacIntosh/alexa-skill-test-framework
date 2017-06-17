@@ -199,7 +199,7 @@ module.exports = {
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
 	 */
-	test: function (sequence) {
+	test: function(sequence, testDescription)	{
 		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
 		if (!sequence) throw "'sequence' argument must be provided.";
 
@@ -207,8 +207,8 @@ module.exports = {
 		var locale = this.locale;
 		var self = this;
 
-		it("returns the correct responses", function (done) {
-			var run = function (handler, sequenceIndex, attributes) {
+		it(testDescription || "returns the correct responses", function(done) {
+			var run = function(handler, sequenceIndex, attributes) {
 				if (sequenceIndex >= sequence.length) {
 					// all requests were executed
 					done();
