@@ -199,6 +199,8 @@ module.exports = {
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
 	 * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
+	 * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
+	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function(sequence, testDescription)	{
@@ -267,12 +269,44 @@ module.exports = {
 							{
 								let directives = response.response.directives;
 								let elicitedSlot;
-								for (let i = 0; i < directives.length; i++) {
-									if (directives[i].type === 'Dialog.ElicitSlot') {
-										elicitedSlot = directives[i].slotToElicit;
+								if (directives) {
+									for (let i = 0; i < directives.length; i++) {
+										if (directives[i].type === 'Dialog.ElicitSlot') {
+											elicitedSlot = directives[i].slotToElicit;
+										}
 									}
 								}
 								self._assertStringEqual(context, "elicitSlot", elicitedSlot, currentItem.elicitsSlot);
+							}
+
+							if (currentItem.confirmsSlot)
+							{
+								let directives = response.response.directives;
+								let confirmedSlot;
+								if (directives) {
+									for (let i = 0; i < directives.length; i++) {
+										if (directives[i].type === 'Dialog.ConfirmSlot') {
+											confirmedSlot = directives[i].slotToConfirm;
+										}
+									}
+								}
+								self._assertStringEqual(context, "confirmSlot", confirmedSlot, currentItem.confirmsSlot);
+							}
+
+							if (currentItem.confirmsIntent)
+							{
+								let directives = response.response.directives;
+								let confirmedIntent = false;
+								if (directives) {
+									for (let i = 0; i < directives.length; i++) {
+										if (directives[i].type === 'Dialog.ConfirmIntent') {
+											confirmedIntent = true;
+										}
+									}
+								}
+								if (!confirmedIntent) {
+									context.assert({message: "the response did not ask Alexa to confirm the intent"});
+								}
 							}
 
 							// check the shouldEndSession flag

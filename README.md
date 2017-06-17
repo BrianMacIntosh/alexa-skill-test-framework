@@ -71,6 +71,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `saysCallback(context, speech)`: Optional Function. Recieves the speech from the response as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
   * `callback(context, response)`: Optional Function. Recieves the [response][response examples] object from the request as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
   * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
+  * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
+  * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
 * `description`: An optional description for the mocha test
 
 ### alexaTest.t(arguments)
