@@ -59,7 +59,7 @@ Returns a [SessionEndedRequest][sessionendedrequest docs]. The request can be pa
 * `reason`: The reason. See the [SessionEndedRequest][sessionendedrequest docs] documentation.
 * `locale`: Optionally, an override locale for the request.
 
-### alexaTest.test(sequence)
+### alexaTest.test(sequence, [description])
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
 * `sequence`: An array of requests to test. Each element can have these properties:
   * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
@@ -70,6 +70,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
   * `saysCallback(context, speech)`: Optional Function. Recieves the speech from the response as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
   * `callback(context, response)`: Optional Function. Recieves the [response][response examples] object from the request as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
+  * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
+* `description`: An optional description for the mocha test
 
 ### alexaTest.t(arguments)
 Forwards the request to `alexaTest.i18n.t` and returns the result. You must have called `alexaTest.initializeI18N` previously.

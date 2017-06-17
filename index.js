@@ -198,6 +198,8 @@ module.exports = {
 	 * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
+	 * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
+	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function(sequence, testDescription)	{
 		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
@@ -259,6 +261,18 @@ module.exports = {
 							}
 							if (currentItem.repromptsNothing) {
 								self._assertStringMissing(context, "reprompt", actualReprompt);
+							}
+							
+							if (currentItem.elicitsSlot)
+							{
+								let directives = response.response.directives;
+								let elicitedSlot;
+								for (let i = 0; i < directives.length; i++) {
+									if (directives[i].type === 'Dialog.ElicitSlot') {
+										elicitedSlot = directives[i].slotToElicit;
+									}
+								}
+								self._assertStringEqual(context, "elicitSlot", elicitedSlot, currentItem.elicitsSlot);
 							}
 
 							// check the shouldEndSession flag
