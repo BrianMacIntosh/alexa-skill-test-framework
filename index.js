@@ -203,7 +203,7 @@ module.exports = {
 	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
-	test: function(sequence, testDescription)	{
+	test: function(sequence, testDescription) {
 		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
 		if (!sequence) throw "'sequence' argument must be provided.";
 
@@ -267,44 +267,22 @@ module.exports = {
 							
 							if (currentItem.elicitsSlot)
 							{
-								let directives = response.response.directives;
-								let elicitedSlot;
-								if (directives) {
-									for (let i = 0; i < directives.length; i++) {
-										if (directives[i].type === 'Dialog.ElicitSlot') {
-											elicitedSlot = directives[i].slotToElicit;
-										}
-									}
-								}
-								self._assertStringEqual(context, "elicitSlot", elicitedSlot, currentItem.elicitsSlot);
+								let elicitSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ElicitSlot');
+								let slot = elicitSlotDirective ? elicitSlotDirective.slotToElicit : '';
+								self._assertStringEqual(context, "elicitSlot", slot, currentItem.elicitsSlot);
 							}
 
 							if (currentItem.confirmsSlot)
 							{
-								let directives = response.response.directives;
-								let confirmedSlot;
-								if (directives) {
-									for (let i = 0; i < directives.length; i++) {
-										if (directives[i].type === 'Dialog.ConfirmSlot') {
-											confirmedSlot = directives[i].slotToConfirm;
-										}
-									}
-								}
-								self._assertStringEqual(context, "confirmSlot", confirmedSlot, currentItem.confirmsSlot);
+								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmSlot');
+								let slot = confirmSlotDirective ? confirmSlotDirective.slotToConfirm : '';
+								self._assertStringEqual(context, "confirmSlot", slot, currentItem.confirmsSlot);
 							}
 
 							if (currentItem.confirmsIntent)
 							{
-								let directives = response.response.directives;
-								let confirmedIntent = false;
-								if (directives) {
-									for (let i = 0; i < directives.length; i++) {
-										if (directives[i].type === 'Dialog.ConfirmIntent') {
-											confirmedIntent = true;
-										}
-									}
-								}
-								if (!confirmedIntent) {
+								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmIntent');
+								if (!confirmSlotDirective) {
 									context.assert({message: "the response did not ask Alexa to confirm the intent"});
 								}
 							}
@@ -413,5 +391,20 @@ module.exports = {
 			"user": { "userId": this.userId },
 			"new": true
 		};
+	},
+	
+	/**
+	 * Internal method.
+	 */
+	_getDirectiveFromResponse: function (response, type) {
+		let directives = response.response.directives;
+		if (directives) {
+			for (let i = 0; i < directives.length; i++) {
+				if (directives[i].type === type) {
+					return directives[i];
+				}
+			}
+		}
+		return undefined;
 	}
 }
