@@ -16,11 +16,9 @@ alexaTest.initialize(
 	"amzn1.ask.skill.00000000-0000-0000-0000-000000000000",
 	"amzn1.ask.account.VOID");
 
-describe("Hello World Skill", function()
-{
+describe("Hello World Skill", function () {
 	// tests the behavior of the skill's LaunchRequest
-	describe("LaunchRequest", function()
-	{
+	describe("LaunchRequest", function () {
 		alexaTest.test([
 			{
 				request: alexaTest.getLaunchRequest(),
@@ -30,8 +28,7 @@ describe("Hello World Skill", function()
 	});
 
 	// tests the behavior of the skill's HelloWorldIntent
-	describe("HelloWorldIntent", function()
-	{
+	describe("HelloWorldIntent", function () {
 		alexaTest.test([
 			{
 				request: alexaTest.getIntentRequest("HelloWorldIntent"),

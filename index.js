@@ -3,8 +3,7 @@ const awsContext = require('aws-lambda-mock-context');
 const AssertionError = require('assertion-error');
 const uuid = require('uuid');
 
-CallbackContext = function(framework, sequenceIndex, locale, requestType)
-{
+CallbackContext = function (framework, sequenceIndex, locale, requestType) {
 	this.framework = framework;
 	this.sequenceIndex = sequenceIndex;
 	this.locale = locale;
@@ -14,8 +13,7 @@ CallbackContext = function(framework, sequenceIndex, locale, requestType)
 /**
  * Formats text via i18n, using the locale that was used for the request.
  */
-CallbackContext.prototype.t = function(keys, params)
-{
+CallbackContext.prototype.t = function (keys, params) {
 	if (!params) params = {}
 	if (!params.lng) params.lng = this.locale;
 	return this.framework.t(keys, params);
@@ -30,37 +28,31 @@ CallbackContext.prototype.t = function(keys, params)
  * `operator`: Optionally, the comparison operator that was used.
  * `showDiff`: Optionally, true if Mocha should diff the expected and actual values.
  */
-CallbackContext.prototype.assert = function(data)
-{
+CallbackContext.prototype.assert = function (data) {
 	this.framework._assert(this.sequenceIndex, this.requestType, data);
 }
 
 /**
  * Performs the questionMarkCheck on the response, and asserts if it fails.
  */
-CallbackContext.prototype._questionMarkCheck = function(response)
-{
+CallbackContext.prototype._questionMarkCheck = function (response) {
 	var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
 
 	var hasQuestionMark = false;
-	for (var i = 0; actualSay && i < actualSay.length; i++)
-	{
+	for (var i = 0; actualSay && i < actualSay.length; i++) {
 		var c = actualSay[i];
-		if (c == '?' || c == '\u055E' || c == '\u061F' || c == '\u2E2E' || c == '\uFF1F')
-		{
+		if (c == '?' || c == '\u055E' || c == '\u061F' || c == '\u2E2E' || c == '\uFF1F') {
 			hasQuestionMark = true;
 			break;
 		}
 	}
-	if (response.response.shouldEndSession && hasQuestionMark)
-	{
+	if (response.response.shouldEndSession && hasQuestionMark) {
 		this.assert(
 			{
 				message: "Possible Certification Problem: The response ends the session but contains a question mark."
 			});
 	}
-	if (!response.response.shouldEndSession && !hasQuestionMark)
-	{
+	if (!response.response.shouldEndSession && !hasQuestionMark) {
 		this.assert(
 			{
 				message: "Possible Certification Problem: The response keeps the session open but does not contain a question mark."
@@ -88,8 +80,7 @@ module.exports = {
 	 * @param {string} appId The Skill's app ID. Looks like "amzn1.ask.skill.00000000-0000-0000-0000-000000000000".
 	 * @param {string} userId The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING"
 	 */
-	initialize: function(index, appId, userId)
-	{
+	initialize: function (index, appId, userId) {
 		this.index = index;
 		this.appId = appId;
 		this.userId = userId;
@@ -99,8 +90,7 @@ module.exports = {
 	 * Initializes i18n.
 	 * @param {object} resources The 'resources' object to give to i18n.
 	 */
-	initializeI18N: function(resources)
-	{
+	initializeI18N: function (resources) {
 		this.i18n = require('i18next');
 		var sprintf = require('i18next-sprintf-postprocessor');
 		this.i18n.use(sprintf).init({
@@ -115,8 +105,7 @@ module.exports = {
 	 * Changes the locale used by i18n and to generate requests.
 	 * @param {string} locale E.g. "en-US"
 	 */
-	setLocale: function(locale)
-	{
+	setLocale: function (locale) {
 		if (!locale) throw "'locale' argument must be provided.";
 		this.locale = locale;
 		if (this.i18n) this.i18n.changeLanguage(this.locale);
@@ -127,10 +116,8 @@ module.exports = {
 	 * @param {string} key The key of the feature to enable.
 	 * @param {boolean} enabled Whether the feature should be enabled.
 	 */
-	setExtraFeature: function(key, enabled)
-	{
-		if (this.extraFeatures[key] === undefined)
-		{
+	setExtraFeature: function (key, enabled) {
+		if (this.extraFeatures[key] === undefined) {
 			throw "Framework has no feature with key '" + key + "'.";
 		}
 		this.extraFeatures[key] = !!enabled;
@@ -140,8 +127,7 @@ module.exports = {
 	 * Generates a launch request object.
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
-	getLaunchRequest: function(locale)
-	{
+	getLaunchRequest: function (locale) {
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
@@ -160,14 +146,11 @@ module.exports = {
 	 * @param {object} slots Slot data to call the intent with.
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
-	getIntentRequest: function(intentName, slots, locale)
-	{
-		if (!slots)
-		{
+	getIntentRequest: function (intentName, slots, locale) {
+		if (!slots) {
 			slots = {};
 		}
-		else
-		{
+		else {
 			for (var key in slots) slots[key] = { name: key, value: slots[key] };
 		}
 		return {
@@ -189,8 +172,7 @@ module.exports = {
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 * @see https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/custom-standard-request-types-reference#sessionendedrequest
 	 */
-	getSessionEndedRequest: function(reason, locale)
-	{
+	getSessionEndedRequest: function (reason, locale) {
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
@@ -217,8 +199,7 @@ module.exports = {
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
 	 */
-	test: function(sequence)
-	{
+	test: function (sequence) {
 		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
 		if (!sequence) throw "'sequence' argument must be provided.";
 
@@ -226,16 +207,13 @@ module.exports = {
 		var locale = this.locale;
 		var self = this;
 
-		it("returns the correct responses", function(done) {
-			var run = function(handler, sequenceIndex, attributes)
-			{
-				if (sequenceIndex >= sequence.length)
-				{
+		it("returns the correct responses", function (done) {
+			var run = function (handler, sequenceIndex, attributes) {
+				if (sequenceIndex >= sequence.length) {
 					// all requests were executed
 					done();
 				}
-				else
-				{
+				else {
 					var ctx = awsContext();
 					var currentItem = sequence[sequenceIndex];
 
@@ -244,9 +222,9 @@ module.exports = {
 					if (attributes) {
 						request.session.attributes = JSON.parse(JSON.stringify(attributes));
 					} else {
-						request.session.attributes =  {};
+						request.session.attributes = {};
 					}
-					var callback = function(err, result) {
+					var callback = function (err, result) {
 						if (err) return ctx.fail(err);
 						return ctx.succeed(result);
 					}
@@ -268,28 +246,23 @@ module.exports = {
 							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
 
 							// check the returned speech
-							if (currentItem.says !== undefined)
-							{
+							if (currentItem.says !== undefined) {
 								var expected = "<speak> " + currentItem.says + " </speak>";
 								self._assertStringEqual(context, "speech", actualSay, expected);
 							}
-							if (currentItem.saysNothing)
-							{
+							if (currentItem.saysNothing) {
 								self._assertStringMissing(context, "speech", actualSay);
 							}
-							if (currentItem.reprompts !== undefined)
-							{
+							if (currentItem.reprompts !== undefined) {
 								var expected = "<speak> " + currentItem.reprompts + " </speak>";
 								self._assertStringEqual(context, "reprompt", actualReprompt, expected);
 							}
-							if (currentItem.repromptsNothing)
-							{
+							if (currentItem.repromptsNothing) {
 								self._assertStringMissing(context, "reprompt", actualReprompt);
 							}
 
 							// check the shouldEndSession flag
-							if (currentItem.shouldEndSession === true && !response.response.shouldEndSession)
-							{
+							if (currentItem.shouldEndSession === true && !response.response.shouldEndSession) {
 								context.assert(
 									{
 										message: "the response did not end the session",
@@ -297,8 +270,7 @@ module.exports = {
 										actual: "the response did not end the session"
 									});
 							}
-							else if (currentItem.shouldEndSession === false && response.response.shouldEndSession)
-							{
+							else if (currentItem.shouldEndSession === false && response.response.shouldEndSession) {
 								context.assert(
 									{
 										message: "the response ended the session",
@@ -308,18 +280,15 @@ module.exports = {
 							}
 
 							// custom checks
-							if (currentItem.saysCallback)
-							{
+							if (currentItem.saysCallback) {
 								currentItem.saysCallback(context, actualSay);
 							}
-							if (currentItem.callback)
-							{
+							if (currentItem.callback) {
 								currentItem.callback(context, response);
 							}
 
 							// extra checks
-							if (self.extraFeatures.questionMarkCheck)
-							{
+							if (self.extraFeatures.questionMarkCheck) {
 								context._questionMarkCheck(response);
 							}
 
@@ -335,8 +304,7 @@ module.exports = {
 	/**
 	 * Formats text via i18n.
 	 */
-	t: function()
-	{
+	t: function () {
 		if (!this.i18n) throw "i18n is not initialized. You must call 'initializeI18N' before calling 't'.";
 		return this.i18n.t.apply(this.i18n, arguments);
 	},
@@ -344,10 +312,8 @@ module.exports = {
 	/**
 	 * Internal method. Asserts if the strings are not equal.
 	 */
-	_assertStringEqual: function(context, name, actual, expected)
-	{
-		if (expected != actual)
-		{
+	_assertStringEqual: function (context, name, actual, expected) {
+		if (expected != actual) {
 			context.assert(
 				{
 					message: "the response did not return the correct " + name + " value",
@@ -360,27 +326,23 @@ module.exports = {
 	/**
 	 * Internal method. Asserts if the string exists.
 	 */
-	_assertStringMissing: function(context, name, actual)
-	{
-		if (actual)
-		{
+	_assertStringMissing: function (context, name, actual) {
+		if (actual) {
 			context.assert(
-			{
-				message: "the response unexpectedly returned a " + name + " value",
-				expected: "undefined", actual: actual ? actual : String(actual),
-				operator: "==", showDiff: true
-			});
+				{
+					message: "the response unexpectedly returned a " + name + " value",
+					expected: "undefined", actual: actual ? actual : String(actual),
+					operator: "==", showDiff: true
+				});
 		}
 	},
 
 	/**
 	 * Internal method.
 	 */
-	_assert: function(sequenceIndex, requestType, data)
-	{
-		var message = "Request #" + (sequenceIndex+1) + " (" + requestType + ")";
-		if (data.message)
-		{
+	_assert: function (sequenceIndex, requestType, data) {
+		var message = "Request #" + (sequenceIndex + 1) + " (" + requestType + ")";
+		if (data.message) {
 			message += ": " + data.message;
 		}
 		data.message = message;
@@ -395,15 +357,13 @@ module.exports = {
 	/**
 	 * Internal method.
 	 */
-	_getSessionData: function()
-	{
+	_getSessionData: function () {
 		return {
-				"sessionId": "SessionId.00000000-0000-0000-0000-000000000000", //TODO: randomize
-				"application": { "applicationId": this.appId },
-				"attributes": {},
-				"user": { "userId": this.userId },
-				"new": true
-			};
+			"sessionId": "SessionId.00000000-0000-0000-0000-000000000000", //TODO: randomize
+			"application": { "applicationId": this.appId },
+			"attributes": {},
+			"user": { "userId": this.userId },
+			"new": true
+		};
 	}
-
 }

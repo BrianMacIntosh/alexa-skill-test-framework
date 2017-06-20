@@ -20,32 +20,27 @@ alexaTest.initialize(
 var textResources = require("./spacefact-language");
 alexaTest.initializeI18N(textResources);
 
-var supportedLocales = [ "en-US", "en-GB", "de-DE" ];
+var supportedLocales = ["en-US", "en-GB", "de-DE"];
 
 // perform each test in each supported language
-for (var i = 0; i < supportedLocales.length; i++)
-{
+for (var i = 0; i < supportedLocales.length; i++) {
 	var locale = supportedLocales[i];
 
 	// set the language
 	alexaTest.setLocale(locale);
 
 	// callback function that asserts if the provided string is not a fact from the list
-	var assertIfNotFact = function(context, suspectedFact)
-	{
+	var assertIfNotFact = function (context, suspectedFact) {
 		var facts = context.t("FACTS");
-		for (var i = 0; i < facts.length; i++)
-		{
+		for (var i = 0; i < facts.length; i++) {
 			if (suspectedFact === "<speak> " + context.t("GET_FACT_MESSAGE") + facts[i] + " </speak>") return;
 		}
 		context.assert({ message: "'" + suspectedFact + "' is not a space fact." });
 	}
 
-	describe("Space Fact Skill (" + locale + ")", function()
-	{
+	describe("Space Fact Skill (" + locale + ")", function () {
 		// tests the behavior of the skill's LaunchRequest
-		describe("LaunchRequest", function()
-		{
+		describe("LaunchRequest", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getLaunchRequest(), shouldEndSession: true, repromptsNothing: true,
@@ -55,8 +50,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 		});
 
 		// tests the behavior of the skill's GetNewFactIntent
-		describe("GetNewFactIntent", function()
-		{
+		describe("GetNewFactIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("GetNewFactIntent"),
@@ -66,8 +60,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 		});
 
 		// tests the behavior of the skill's AMAZON.HelpIntent
-		describe("AMAZON.HelpIntent into GetNewFactIntent", function()
-		{
+		describe("AMAZON.HelpIntent into GetNewFactIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("AMAZON.HelpIntent"),
@@ -79,8 +72,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 				}
 			]);
 		});
-		describe("AMAZON.HelpIntent into AMAZON.CancelIntent", function()
-		{
+		describe("AMAZON.HelpIntent into AMAZON.CancelIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("AMAZON.HelpIntent"),
@@ -92,8 +84,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 				}
 			]);
 		});
-		describe("AMAZON.HelpIntent into AMAZON.StopIntent", function()
-		{
+		describe("AMAZON.HelpIntent into AMAZON.StopIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("AMAZON.HelpIntent"),
@@ -107,8 +98,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 		});
 
 		// tests the behavior of the skill's AMAZON.CancelIntent
-		describe("AMAZON.CancelIntent", function()
-		{
+		describe("AMAZON.CancelIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("AMAZON.CancelIntent"),
@@ -118,8 +108,7 @@ for (var i = 0; i < supportedLocales.length; i++)
 		});
 
 		// tests the behavior of the skill's AMAZON.StopIntent
-		describe("AMAZON.StopIntent", function()
-		{
+		describe("AMAZON.StopIntent", function () {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("AMAZON.StopIntent"),
