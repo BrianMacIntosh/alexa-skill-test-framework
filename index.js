@@ -198,8 +198,12 @@ module.exports = {
 	 * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
 	 * `callback`: Optional Function. Recieves the response object from the request as a parameter. You can make custom checks against the response using any assertion library you like in here.
+	 * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
+	 * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
+	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
+	 * @param {string} testDescription An optional description for the mocha test
 	 */
-	test: function (sequence) {
+	test: function(sequence, testDescription) {
 		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
 		if (!sequence) throw "'sequence' argument must be provided.";
 
@@ -207,8 +211,8 @@ module.exports = {
 		var locale = this.locale;
 		var self = this;
 
-		it("returns the correct responses", function (done) {
-			var run = function (handler, sequenceIndex, attributes) {
+		it(testDescription || "returns the correct responses", function(done) {
+			var run = function(handler, sequenceIndex, attributes) {
 				if (sequenceIndex >= sequence.length) {
 					// all requests were executed
 					done();
@@ -259,6 +263,28 @@ module.exports = {
 							}
 							if (currentItem.repromptsNothing) {
 								self._assertStringMissing(context, "reprompt", actualReprompt);
+							}
+							
+							if (currentItem.elicitsSlot)
+							{
+								let elicitSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ElicitSlot');
+								let slot = elicitSlotDirective ? elicitSlotDirective.slotToElicit : '';
+								self._assertStringEqual(context, "elicitSlot", slot, currentItem.elicitsSlot);
+							}
+
+							if (currentItem.confirmsSlot)
+							{
+								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmSlot');
+								let slot = confirmSlotDirective ? confirmSlotDirective.slotToConfirm : '';
+								self._assertStringEqual(context, "confirmSlot", slot, currentItem.confirmsSlot);
+							}
+
+							if (currentItem.confirmsIntent)
+							{
+								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmIntent');
+								if (!confirmSlotDirective) {
+									context.assert({message: "the response did not ask Alexa to confirm the intent"});
+								}
 							}
 
 							// check the shouldEndSession flag
@@ -365,5 +391,20 @@ module.exports = {
 			"user": { "userId": this.userId },
 			"new": true
 		};
+	},
+	
+	/**
+	 * Internal method.
+	 */
+	_getDirectiveFromResponse: function (response, type) {
+		let directives = response.response.directives;
+		if (directives) {
+			for (let i = 0; i < directives.length; i++) {
+				if (directives[i].type === type) {
+					return directives[i];
+				}
+			}
+		}
+		return undefined;
 	}
 }
