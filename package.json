@@ -20,6 +20,9 @@
     "email": "brianamacintosh@gmail.com",
     "url": "http://brianmacintosh.com/"
   },
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha 'examples/**/*-tests.js' --slow 200"
+  },
   "files": [
     "index.js",
     "examples"
@@ -43,5 +46,10 @@
     "url": "https://github.com/BrianMacIntosh/alexa-skill-test-framework/issues",
     "email": "brianamacintosh@gmail.com"
   },
-  "repository": "BrianMacIntosh/alexa-skill-test-framework"
+  "repository": "BrianMacIntosh/alexa-skill-test-framework",
+  "devDependencies": {
+    "alexa-sdk": "^1.0.10",
+    "eslint": "^3.0.0",
+    "mocha": "^3.2.0"
+  }
 }

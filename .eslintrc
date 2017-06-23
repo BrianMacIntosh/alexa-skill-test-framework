@@ -1,0 +1,92 @@
+{
+  "extends": [
+    "eslint:recommended"
+  ],
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "globals": {
+    "Promise": true
+  },
+  "rules": {
+    "no-console": 0,
+    // strict mode
+    "strict": [
+      2,
+      "function"
+    ],
+    // formatting, spaces, operators
+    "indent": [
+      2,
+      "tab",
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+    "keyword-spacing": 2,
+    "space-before-blocks": [
+      2,
+      "always"
+    ],
+    "space-before-function-paren": [
+      0,
+      "always"
+    ],
+    "dot-location": [
+      2,
+      "property"
+    ],
+    "space-infix-ops": 2,
+    "key-spacing": [
+      2,
+      {
+        "beforeColon": false,
+        "afterColon": true
+      }
+    ],
+    "operator-linebreak": [
+      2,
+      "after"
+    ],
+    "no-spaced-func": 2,
+    "comma-spacing": [
+      1,
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    "no-multiple-empty-lines": [
+      2,
+      {
+        "max": 2
+      }
+    ],
+    "camelcase": [
+      1,
+      {
+        "properties": "always"
+      }
+    ],
+    // coding style
+    "curly": 2,
+    "wrap-iife": [
+      2,
+      "inside"
+    ],
+    "eqeqeq": 2,
+    "no-unexpected-multiline": 2,
+    "no-multi-str": 2,
+    "no-irregular-whitespace": 2,
+    "linebreak-style": 0,
+    "eol-last": 1
+  }
+}

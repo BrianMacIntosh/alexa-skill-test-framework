@@ -56,3 +56,7 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# lock files (do not track for libraries)
+package-lock.json
+yarn.lock

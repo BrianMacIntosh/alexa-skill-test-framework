@@ -1,23 +1,28 @@
-
 const awsContext = require('aws-lambda-mock-context');
 const AssertionError = require('assertion-error');
 const uuid = require('uuid');
 
-CallbackContext = function (framework, sequenceIndex, locale, requestType) {
+const CallbackContext = function (framework, sequenceIndex, locale, requestType) {
+	'use strict';
 	this.framework = framework;
 	this.sequenceIndex = sequenceIndex;
 	this.locale = locale;
 	this.requestType = requestType;
-}
+};
 
 /**
  * Formats text via i18n, using the locale that was used for the request.
  */
 CallbackContext.prototype.t = function (keys, params) {
-	if (!params) params = {}
-	if (!params.lng) params.lng = this.locale;
+	'use strict';
+	if (!params) {
+		params = {};
+	}
+	if (!params.lng) {
+		params.lng = this.locale;
+	}
 	return this.framework.t(keys, params);
-}
+};
 
 /**
  * Throws an assertion error.
@@ -29,19 +34,21 @@ CallbackContext.prototype.t = function (keys, params) {
  * `showDiff`: Optionally, true if Mocha should diff the expected and actual values.
  */
 CallbackContext.prototype.assert = function (data) {
+	'use strict';
 	this.framework._assert(this.sequenceIndex, this.requestType, data);
-}
+};
 
 /**
  * Performs the questionMarkCheck on the response, and asserts if it fails.
  */
 CallbackContext.prototype._questionMarkCheck = function (response) {
+	'use strict';
 	var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
-
+	
 	var hasQuestionMark = false;
 	for (var i = 0; actualSay && i < actualSay.length; i++) {
 		var c = actualSay[i];
-		if (c == '?' || c == '\u055E' || c == '\u061F' || c == '\u2E2E' || c == '\uFF1F') {
+		if (c === '?' || c === '\u055E' || c === '\u061F' || c === '\u2E2E' || c === '\uFF1F') {
 			hasQuestionMark = true;
 			break;
 		}
@@ -58,13 +65,13 @@ CallbackContext.prototype._questionMarkCheck = function (response) {
 				message: "Possible Certification Problem: The response keeps the session open but does not contain a question mark."
 			});
 	}
-}
+};
 
 module.exports = {
-
+	
 	locale: "en-US",
 	version: "1.0",
-
+	
 	//TODO: allow these to be enabled or disabled on a per-request basis
 	extraFeatures: {
 		/**
@@ -73,7 +80,7 @@ module.exports = {
 		 */
 		questionMarkCheck: true,
 	},
-
+	
 	/**
 	 * Initializes necessary values before using the test framework.
 	 * @param {object} index The object containing your skill's 'handler' method.
@@ -81,16 +88,18 @@ module.exports = {
 	 * @param {string} userId The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING"
 	 */
 	initialize: function (index, appId, userId) {
+		'use strict';
 		this.index = index;
 		this.appId = appId;
 		this.userId = userId;
 	},
-
+	
 	/**
 	 * Initializes i18n.
 	 * @param {object} resources The 'resources' object to give to i18n.
 	 */
 	initializeI18N: function (resources) {
+		'use strict';
 		this.i18n = require('i18next');
 		var sprintf = require('i18next-sprintf-postprocessor');
 		this.i18n.use(sprintf).init({
@@ -100,34 +109,41 @@ module.exports = {
 			resources: resources
 		});
 	},
-
+	
 	/**
 	 * Changes the locale used by i18n and to generate requests.
 	 * @param {string} locale E.g. "en-US"
 	 */
 	setLocale: function (locale) {
-		if (!locale) throw "'locale' argument must be provided.";
+		'use strict';
+		if (!locale) {
+			throw "'locale' argument must be provided.";
+		}
 		this.locale = locale;
-		if (this.i18n) this.i18n.changeLanguage(this.locale);
+		if (this.i18n) {
+			this.i18n.changeLanguage(this.locale);
+		}
 	},
-
+	
 	/**
 	 * Enables or disables an optional testing feature.
 	 * @param {string} key The key of the feature to enable.
 	 * @param {boolean} enabled Whether the feature should be enabled.
 	 */
 	setExtraFeature: function (key, enabled) {
+		'use strict';
 		if (this.extraFeatures[key] === undefined) {
 			throw "Framework has no feature with key '" + key + "'.";
 		}
 		this.extraFeatures[key] = !!enabled;
 	},
-
+	
 	/**
 	 * Generates a launch request object.
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
 	getLaunchRequest: function (locale) {
+		'use strict';
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
@@ -139,7 +155,7 @@ module.exports = {
 			}
 		};
 	},
-
+	
 	/**
 	 * Generates an intent request object.
 	 * @param {string} intentName The name of the intent to call.
@@ -147,11 +163,14 @@ module.exports = {
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
 	getIntentRequest: function (intentName, slots, locale) {
+		'use strict';
 		if (!slots) {
 			slots = {};
 		}
 		else {
-			for (var key in slots) slots[key] = { name: key, value: slots[key] };
+			for (var key in slots) {
+				slots[key] = {name: key, value: slots[key]};
+			}
 		}
 		return {
 			"version": this.version,
@@ -161,11 +180,11 @@ module.exports = {
 				"requestId": "EdwRequestId." + uuid.v4(),
 				"timestamp": new Date().toISOString(),
 				"locale": locale || this.locale,
-				"intent": { "name": intentName, "slots": slots }
+				"intent": {"name": intentName, "slots": slots}
 			},
 		};
 	},
-
+	
 	/**
 	 * Generates a sesson ended request object.
 	 * @param {string} reason The reason the session was ended.
@@ -173,6 +192,7 @@ module.exports = {
 	 * @see https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/custom-standard-request-types-reference#sessionendedrequest
 	 */
 	getSessionEndedRequest: function (reason, locale) {
+		'use strict';
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
@@ -186,7 +206,7 @@ module.exports = {
 			}
 		};
 	},
-
+	
 	/**
 	 * Tests the responses of a sequence of requests to the skill.
 	 * @param {object[]} sequence An array of requests to test. Each element can have these properties:
@@ -203,16 +223,21 @@ module.exports = {
 	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
-	test: function(sequence, testDescription) {
-		if (!this.index) throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
-		if (!sequence) throw "'sequence' argument must be provided.";
-
+	test: function (sequence, testDescription) {
+		'use strict';
+		if (!this.index) {
+			throw "The module is not initialized. You must call 'initialize' before calling 'test'.";
+		}
+		if (!sequence) {
+			throw "'sequence' argument must be provided.";
+		}
+		
 		var index = this.index;
 		var locale = this.locale;
 		var self = this;
-
-		it(testDescription || "returns the correct responses", function(done) {
-			var run = function(handler, sequenceIndex, attributes) {
+		
+		it(testDescription || "returns the correct responses", function (done) {
+			var run = function (handler, sequenceIndex, attributes) {
 				if (sequenceIndex >= sequence.length) {
 					// all requests were executed
 					done();
@@ -220,7 +245,7 @@ module.exports = {
 				else {
 					var ctx = awsContext();
 					var currentItem = sequence[sequenceIndex];
-
+					
 					var request = currentItem.request;
 					request.session.new = sequenceIndex === 0;
 					if (attributes) {
@@ -229,64 +254,65 @@ module.exports = {
 						request.session.attributes = {};
 					}
 					var callback = function (err, result) {
-						if (err) return ctx.fail(err);
+						if (err) {
+							return ctx.fail(err);
+						}
 						return ctx.succeed(result);
-					}
+					};
 					handler(request, ctx, callback, true);
-
+					
 					var requestType = request.request.type;
-					if (requestType == "IntentRequest") requestType = request.request.intent.name;
+					if (requestType === "IntentRequest") {
+						requestType = request.request.intent.name;
+					}
 					var context = new CallbackContext(self, sequenceIndex, locale, requestType);
-
+					
 					ctx.Promise
 						.then(response => {
 							//TODO: null checks
-
+							
 							if (response.toJSON) {
 								response = response.toJSON();
 							}
-
+							
 							var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
 							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
-
+							
 							// check the returned speech
 							if (currentItem.says !== undefined) {
-								var expected = "<speak> " + currentItem.says + " </speak>";
+								let expected = "<speak> " + currentItem.says + " </speak>";
 								self._assertStringEqual(context, "speech", actualSay, expected);
 							}
 							if (currentItem.saysNothing) {
 								self._assertStringMissing(context, "speech", actualSay);
 							}
 							if (currentItem.reprompts !== undefined) {
-								var expected = "<speak> " + currentItem.reprompts + " </speak>";
+								let expected = "<speak> " + currentItem.reprompts + " </speak>";
 								self._assertStringEqual(context, "reprompt", actualReprompt, expected);
 							}
 							if (currentItem.repromptsNothing) {
 								self._assertStringMissing(context, "reprompt", actualReprompt);
 							}
 							
-							if (currentItem.elicitsSlot)
-							{
+							if (currentItem.elicitsSlot) {
 								let elicitSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ElicitSlot');
 								let slot = elicitSlotDirective ? elicitSlotDirective.slotToElicit : '';
 								self._assertStringEqual(context, "elicitSlot", slot, currentItem.elicitsSlot);
 							}
-
-							if (currentItem.confirmsSlot)
-							{
+							
+							if (currentItem.confirmsSlot) {
 								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmSlot');
 								let slot = confirmSlotDirective ? confirmSlotDirective.slotToConfirm : '';
 								self._assertStringEqual(context, "confirmSlot", slot, currentItem.confirmsSlot);
 							}
-
-							if (currentItem.confirmsIntent)
-							{
+							
+							if (currentItem.confirmsIntent) {
 								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmIntent');
 								if (!confirmSlotDirective) {
 									context.assert({message: "the response did not ask Alexa to confirm the intent"});
 								}
 							}
-
+							
 							// check the shouldEndSession flag
 							if (currentItem.shouldEndSession === true && !response.response.shouldEndSession) {
 								context.assert(
@@ -304,7 +330,7 @@ module.exports = {
 										actual: "the response ended the session"
 									});
 							}
-
+							
 							// custom checks
 							if (currentItem.saysCallback) {
 								currentItem.saysCallback(context, actualSay);
@@ -312,34 +338,38 @@ module.exports = {
 							if (currentItem.callback) {
 								currentItem.callback(context, response);
 							}
-
+							
 							// extra checks
 							if (self.extraFeatures.questionMarkCheck) {
 								context._questionMarkCheck(response);
 							}
-
+							
 							run(handler, sequenceIndex + 1, response.sessionAttributes);
 						})
 						.catch(done);
 				}
-			}
+			};
 			run(index.handler, 0, {});
 		});
 	},
-
+	
 	/**
 	 * Formats text via i18n.
 	 */
 	t: function () {
-		if (!this.i18n) throw "i18n is not initialized. You must call 'initializeI18N' before calling 't'.";
+		'use strict';
+		if (!this.i18n) {
+			throw "i18n is not initialized. You must call 'initializeI18N' before calling 't'.";
+		}
 		return this.i18n.t.apply(this.i18n, arguments);
 	},
-
+	
 	/**
 	 * Internal method. Asserts if the strings are not equal.
 	 */
 	_assertStringEqual: function (context, name, actual, expected) {
-		if (expected != actual) {
+		'use strict';
+		if (expected !== actual) {
 			context.assert(
 				{
 					message: "the response did not return the correct " + name + " value",
@@ -348,11 +378,12 @@ module.exports = {
 				});
 		}
 	},
-
+	
 	/**
 	 * Internal method. Asserts if the string exists.
 	 */
 	_assertStringMissing: function (context, name, actual) {
+		'use strict';
 		if (actual) {
 			context.assert(
 				{
@@ -362,33 +393,35 @@ module.exports = {
 				});
 		}
 	},
-
+	
 	/**
 	 * Internal method.
 	 */
 	_assert: function (sequenceIndex, requestType, data) {
+		'use strict';
 		var message = "Request #" + (sequenceIndex + 1) + " (" + requestType + ")";
 		if (data.message) {
 			message += ": " + data.message;
 		}
 		data.message = message;
-
+		
 		// the message has information that should be displayed by the test runner
 		data.generatedMessage = false;
-
+		
 		data.name = "AssertionError";
 		throw new AssertionError(message, data);
 	},
-
+	
 	/**
 	 * Internal method.
 	 */
 	_getSessionData: function () {
+		'use strict';
 		return {
 			"sessionId": "SessionId.00000000-0000-0000-0000-000000000000", //TODO: randomize
-			"application": { "applicationId": this.appId },
+			"application": {"applicationId": this.appId},
 			"attributes": {},
-			"user": { "userId": this.userId },
+			"user": {"userId": this.userId},
 			"new": true
 		};
 	},
@@ -397,6 +430,7 @@ module.exports = {
 	 * Internal method.
 	 */
 	_getDirectiveFromResponse: function (response, type) {
+		'use strict';
 		let directives = response.response.directives;
 		if (directives) {
 			for (let i = 0; i < directives.length; i++) {
@@ -407,4 +441,4 @@ module.exports = {
 		}
 		return undefined;
 	}
-}
+};
