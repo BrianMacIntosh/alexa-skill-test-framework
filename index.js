@@ -212,8 +212,10 @@ module.exports = {
 	 * @param {object[]} sequence An array of requests to test. Each element can have these properties:
 	 * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
 	 * `says`: Optional String. Tests that the speech output from the request is the string specified.
+	 * `saysLike`: Optional String. Tests that the speech output from the request contains the string specified.
 	 * `saysNothing`: Optional Boolean. If true, tests that the response has no speech output.
 	 * `reprompts`: Optional String. Tests that the reprompt output from the request is the string specified.
+	 * `repromptsLike`: Optional String. Tests that the reprompt output from the request contains the string specified.
 	 * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
 	 * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
 	 * `saysCallback`: Optional Function. Recieves the speech from the response as a parameter. You can make custom checks against it using any assertion library you like.
@@ -283,12 +285,18 @@ module.exports = {
 								let expected = "<speak> " + currentItem.says + " </speak>";
 								self._assertStringEqual(context, "speech", actualSay, expected);
 							}
+							if (currentItem.saysLike !== undefined) {
+								self._assertStringContains(context, "speech", actualSay, currentItem.saysLike);
+							}
 							if (currentItem.saysNothing) {
 								self._assertStringMissing(context, "speech", actualSay);
 							}
 							if (currentItem.reprompts !== undefined) {
 								let expected = "<speak> " + currentItem.reprompts + " </speak>";
 								self._assertStringEqual(context, "reprompt", actualReprompt, expected);
+							}
+							if (currentItem.repromptsLike !== undefined) {
+								self._assertStringContains(context, "reprompt", actualReprompt, currentItem.repromptsLike);
 							}
 							if (currentItem.repromptsNothing) {
 								self._assertStringMissing(context, "reprompt", actualReprompt);
@@ -375,6 +383,21 @@ module.exports = {
 					message: "the response did not return the correct " + name + " value",
 					expected: expected, actual: actual ? actual : String(actual),
 					operator: "==", showDiff: true
+				});
+		}
+	},
+
+	/**
+	 * Internal method. Asserts if the strings are not equal.
+	 */
+	_assertStringContains: function (context, name, actual, substring) {
+		'use strict';
+		if (actual.indexOf(substring) < 0) {
+			context.assert(
+				{
+					message: "the response did not contain the correct " + name + " value",
+					expected: substring, actual: actual ? actual : String(actual),
+					operator: "LIKE", showDiff: true
 				});
 		}
 	},

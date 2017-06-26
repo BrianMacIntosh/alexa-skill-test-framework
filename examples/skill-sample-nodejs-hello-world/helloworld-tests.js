@@ -36,4 +36,14 @@ describe("Hello World Skill", function () {
 			}
 		]);
 	});
+
+	// tests the behavior of the skill's HelloWorldIntent with like operator
+	describe("HelloWorldIntent like", function () {
+		alexaTest.test([
+			{
+				request: alexaTest.getIntentRequest("HelloWorldIntent"),
+				saysLike: "World", repromptsNothing: true, shouldEndSession: true
+			}
+		]);
+	});
 });
