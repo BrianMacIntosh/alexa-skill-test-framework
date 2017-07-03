@@ -70,11 +70,12 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `repromptsLike`: Optional String. Tests that the reprompt output from the request contains the string specified.
   * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
   * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
-  * `saysCallback(context, speech)`: Optional Function. Recieves the speech from the response as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
-  * `callback(context, response)`: Optional Function. Recieves the [response][response examples] object from the request as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
+  * `saysCallback(context, speech)`: Optional Function. Receives the speech from the response as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
+  * `callback(context, response)`: Optional Function. Receives the [response][response examples] object from the request as a parameter. You can throw nice assertions using `context.assert` and get text from i18n with `context.t`.
   * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
   * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
   * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
+  * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
 * `description`: An optional description for the mocha test
 
 ### alexaTest.t(arguments)

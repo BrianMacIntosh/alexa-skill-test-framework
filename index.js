@@ -223,6 +223,7 @@ module.exports = {
 	 * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
 	 * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
 	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
+	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function (sequence, testDescription) {
@@ -318,6 +319,14 @@ module.exports = {
 								let confirmSlotDirective = self._getDirectiveFromResponse(response, 'Dialog.ConfirmIntent');
 								if (!confirmSlotDirective) {
 									context.assert({message: "the response did not ask Alexa to confirm the intent"});
+								}
+							}
+							
+							if (currentItem.hasAttributes) {
+								for (let att in currentItem.hasAttributes) {
+									if (currentItem.hasAttributes.hasOwnProperty(att)) {
+										self._assertStringEqual(context, att, response.sessionAttributes[att], currentItem.hasAttributes[att]);
+									}
 								}
 							}
 							

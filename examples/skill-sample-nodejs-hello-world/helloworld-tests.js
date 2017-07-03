@@ -32,7 +32,10 @@ describe("Hello World Skill", function () {
 		alexaTest.test([
 			{
 				request: alexaTest.getIntentRequest("HelloWorldIntent"),
-				says: "Hello World!", repromptsNothing: true, shouldEndSession: true
+				says: "Hello World!", repromptsNothing: true, shouldEndSession: true,
+				hasAttributes: {
+					foo: 'bar'
+				}
 			}
 		]);
 	});

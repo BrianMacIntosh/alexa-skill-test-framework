@@ -18,6 +18,7 @@ var handlers = {
 		this.emit('SayHello');
 	},
 	'SayHello': function () {
+		this.attributes['foo'] = 'bar';
 		this.emit(':tell', 'Hello World!');
 	}
 };
