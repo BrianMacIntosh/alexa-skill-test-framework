@@ -76,6 +76,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
   * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
   * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
+  * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
+  * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
 * `description`: An optional description for the mocha test
 
 ### alexaTest.t(arguments)

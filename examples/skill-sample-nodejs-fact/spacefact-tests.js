@@ -54,7 +54,8 @@ for (var i = 0; i < supportedLocales.length; i++) {
 			alexaTest.test([
 				{
 					request: alexaTest.getIntentRequest("GetNewFactIntent"),
-					saysCallback: assertIfNotFact, shouldEndSession: true, repromptsNothing: true
+					saysCallback: assertIfNotFact, shouldEndSession: true, repromptsNothing: true,
+					hasCardTitle: alexaTest.t("SKILL_NAME")
 				}
 			]);
 		});

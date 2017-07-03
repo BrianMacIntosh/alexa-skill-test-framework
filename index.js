@@ -224,6 +224,8 @@ module.exports = {
 	 * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
 	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
 	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
+	 * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
+	 * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function (sequence, testDescription) {
@@ -330,6 +332,22 @@ module.exports = {
 								}
 							}
 							
+							if (currentItem.hasCardTitle) {
+								if (!response.response.card) {
+									context.assert({message: "the response did not contain a card"});
+								} else {
+									self._assertStringEqual(context, "cardTitle", response.response.card.title, currentItem.hasCardTitle);
+								}
+							}
+							
+							if (currentItem.hasCardContent) {
+								if (!response.response.card) {
+									context.assert({message: "the response did not contain a card"});
+								} else {
+									self._assertStringEqual(context, "cardContent", response.response.card.content, currentItem.hasCardContent);
+								}
+							}
+							
 							// check the shouldEndSession flag
 							if (currentItem.shouldEndSession === true && !response.response.shouldEndSession) {
 								context.assert(
@@ -395,7 +413,7 @@ module.exports = {
 				});
 		}
 	},
-
+	
 	/**
 	 * Internal method. Asserts if the strings are not equal.
 	 */
