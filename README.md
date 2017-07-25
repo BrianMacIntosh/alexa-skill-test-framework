@@ -51,7 +51,7 @@ Returns a [LaunchRequest][launchrequest docs]. The request can be passed to `tes
 ### alexaTest.getIntentRequest(intentName, [slots], [locale])
 Returns an [IntentRequest][intentrequest docs]. The request can be passed to `test` (see below).
 * `intentName`: The name of the intent to invoke.
-* `slots`: Optionally, an object containing key-value pairs. The keys are the names of the slots required by the specified intent, and the values are the slot values.
+* `slots`: Optionally, an object containing slots data for the intent.
 * `locale`: Optionally, an override locale for the request.
 
 ### alexaTest.getSessionEndedRequest(reason, [locale])
