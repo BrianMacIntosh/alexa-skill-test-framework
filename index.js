@@ -237,6 +237,8 @@ module.exports = {
 			throw "'sequence' argument must be provided.";
 		}
 		
+		var randomSessionId = `SessionId.${uuid.v4()}`;
+		
 		var index = this.index;
 		var locale = this.locale;
 		var self = this;
@@ -258,6 +260,7 @@ module.exports = {
 					} else {
 						request.session.attributes = {};
 					}
+					request.session.sessionId = randomSessionId;
 					var callback = function (err, result) {
 						if (err) {
 							return ctx.fail(err);
@@ -468,7 +471,8 @@ module.exports = {
 	_getSessionData: function () {
 		'use strict';
 		return {
-			"sessionId": "SessionId.00000000-0000-0000-0000-000000000000", //TODO: randomize
+			// randomized for every session and set before calling the handler
+			"sessionId": "SessionId.00000000-0000-0000-0000-000000000000",
 			"application": {"applicationId": this.appId},
 			"attributes": {},
 			"user": {"userId": this.userId},
