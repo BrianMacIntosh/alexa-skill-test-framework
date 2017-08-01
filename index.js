@@ -211,11 +211,12 @@ module.exports = {
 	 * Adds an entity resolution to the given request.
 	 * @param {object} request The intent request to modify.
 	 * @param {string} slotName The name of the slot to add the resolution to. If the slot does not exist it is added.
+	 * @param {string} slotType The type of the slot.
 	 * @param {string} value The value of the slot.
 	 * @param {string} id The id of the resolved entity.
 	 * @return {object} the given intent request to allow chaining.
 	 */
-	addEntityResolutionToRequest: function (request, slotName, value, id) {
+	addEntityResolutionToRequest: function (request, slotName, slotType, value, id) {
 		'use strict';
 		if (!request) {
 			throw 'request must be specified to add entity resolution';
@@ -237,7 +238,7 @@ module.exports = {
 		request.request.intent.slots[slotName].resolutions = {
 			"resolutionsPerAuthority": [
 				{
-					"authority": "amzn1.er-authority.echo-sdk." + this.appId + ".MEDIA_TYPE",
+					"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
 					"status": {
 						"code": "ER_SUCCESS_MATCH"
 					},
