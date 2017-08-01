@@ -59,6 +59,13 @@ Returns a [SessionEndedRequest][sessionendedrequest docs]. The request can be pa
 * `reason`: The reason. See the [SessionEndedRequest][sessionendedrequest docs] documentation.
 * `locale`: Optionally, an override locale for the request.
 
+### alexaTest.addEntityResolutionToRequest(request, slotName, value, id)
+Adds an entity resolution to the given request. Returns the given request to allow call chaining.
+* `request` The intent request to modify.
+* `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
+* `value` The value of the slot.
+* `id` The id of the resolved entity.
+
 ### alexaTest.test(sequence, [description])
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
 * `sequence`: An array of requests to test. Each element can have these properties:
