@@ -99,7 +99,6 @@ describe('Slots and synonyms example skill tests', function () {
 
 		function assertResponseText(context, response) {
 			const outputSpeech = response.response.outputSpeech.ssml.replace('<speak>', '').replace('</speak>', '');
-			console.log(outputSpeech);
 
 			if (CITY_FACTS_DIALOGUE['new york'].indexOf(outputSpeech.trim()) < 0) {
 				context.assert({message: 'Expected dialogue to contain a fact about New York'});
@@ -127,7 +126,6 @@ describe('Slots and synonyms example skill tests', function () {
 
 		function assertResponseText(context, response) {
 			const outputSpeech = response.response.outputSpeech.ssml.replace('<speak>', '').replace('</speak>', '');
-			console.log(outputSpeech);
 
 			if (CITY_FACTS_DIALOGUE['new york'].indexOf(outputSpeech.trim()) < 0) {
 				context.assert({message: 'Expected dialogue to contain a fact about New York'});

@@ -3,7 +3,7 @@ module.exports = {
     'New Yorkers drink 7 times more coffee than people in the rest of America',
     'Roughly half of the population speaks a language other than English at home',
     'In 1789 New York was the first capital of the United States. This only lasted for one year though',
-    '15,152 forms of life have been found in the New York Subway system (these include insects and bacteria'
+    '15,152 forms of life have been found in the New York Subway system. These include insects and bacteria'
   ],
   'las vegas': [
     'More than 41 million people visit Las Vegas each year',
