@@ -1,0 +1,94 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "CityFactIntent",
+      "samples": [
+        "Tell me about {City}",
+        "Give me a fact about {City}"
+      ],
+      "slots": [
+        {
+          "name": "City",
+          "type": "CITY_NAMES",
+          "samples": []
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "CITY_NAMES",
+      "values": [
+        {
+          "id": null,
+          "name": {
+            "value": "New York",
+            "synonyms": [
+              "The big apple",
+              "the city that never sleeps"
+            ]
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Las Vegas",
+            "synonyms": [
+              "Sin city"
+            ]
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Los Angeles",
+            "synonyms": [
+              "L.A",
+              "Angel town",
+              "City of the Angels"
+            ]
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Anchorage",
+            "synonyms": [
+              "Anchor town"
+            ]
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Honolulu",
+            "synonyms": [
+              "The big pineapple"
+            ]
+          }
+        },
+        {
+          "id": null,
+          "name": {
+            "value": "Chicago",
+            "synonyms": [
+              "The windy city"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
