@@ -59,7 +59,7 @@ Returns a [SessionEndedRequest][sessionendedrequest docs]. The request can be pa
 * `reason`: The reason. See the [SessionEndedRequest][sessionendedrequest docs] documentation.
 * `locale`: Optionally, an override locale for the request.
 
-### alexaTest.addEntityResolutionToRequest(request, slotName, value, id)
+### alexaTest.addEntityResolutionToRequest(request, slotName, slotType, value, id)
 Adds an entity resolution to the given request. Returns the given request to allow call chaining.
 * `request` The intent request to modify.
 * `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
