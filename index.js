@@ -227,9 +227,6 @@ module.exports = {
 		if (!value) {
 			throw 'value must be specified to add entity resolution';
 		}
-		if (!id) {
-			throw 'id must be specified to add entity resolution';
-		}
 		
 		if (!request.request.intent.slots[slotName]) {
 			request.request.intent.slots[slotName] = {name: slotName, value: value};

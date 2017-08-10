@@ -65,7 +65,7 @@ Adds an entity resolution to the given request. Returns the given request to all
 * `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
 * `slotType` The type of the slot.
 * `value` The value of the slot.
-* `id` The id of the resolved entity.
+* `id` Optionally, the id of the resolved entity.
 
 ### alexaTest.test(sequence, [description])
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
