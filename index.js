@@ -232,24 +232,26 @@ module.exports = {
 			request.request.intent.slots[slotName] = {name: slotName, value: value};
 		}
 		
-		request.request.intent.slots[slotName].resolutions = {
-			"resolutionsPerAuthority": [
+		if (!request.request.intent.slots[slotName].resolutions) {
+			request.request.intent.slots[slotName].resolutions = {
+				"resolutionsPerAuthority": []
+			};
+		}
+		request.request.intent.slots[slotName].resolutions.resolutionsPerAuthority.push({
+			"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
+			"status": {
+				"code": "ER_SUCCESS_MATCH"
+			},
+			"values": [
 				{
-					"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
-					"status": {
-						"code": "ER_SUCCESS_MATCH"
-					},
-					"values": [
-						{
-							"value": {
-								"name": value,
-								"id": id
-							}
-						}
-					]
+					"value": {
+						"name": value,
+						"id": id
+					}
 				}
 			]
-		};
+		});
+		
 		return request;
 	},
 	
@@ -277,16 +279,18 @@ module.exports = {
 			request.request.intent.slots[slotName] = {name: slotName, value: value};
 		}
 		
-		request.request.intent.slots[slotName].resolutions = {
-			"resolutionsPerAuthority": [
-				{
-					"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
-					"status": {
-						"code": "ER_SUCCESS_NO_MATCH"
-					}
-				}
-			]
-		};
+		if (!request.request.intent.slots[slotName].resolutions) {
+			request.request.intent.slots[slotName].resolutions = {
+				"resolutionsPerAuthority": []
+			};
+		}
+		request.request.intent.slots[slotName].resolutions.resolutionsPerAuthority.push({
+			"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
+			"status": {
+				"code": "ER_SUCCESS_NO_MATCH"
+			}
+		});
+		
 		return request;
 	},
 	
