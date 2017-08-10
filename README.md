@@ -67,6 +67,13 @@ Adds an entity resolution to the given request. Returns the given request to all
 * `value` The value of the slot.
 * `id` Optionally, the id of the resolved entity.
 
+### alexaTest.addEntityResolutionNoMatchToRequest(request, slotName, slotType, value)
+Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request. Returns the given request to allow call chaining.
+* `request` The intent request to modify.
+* `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
+* `slotType` The type of the slot.
+* `value` The value of the slot.
+
 ### alexaTest.test(sequence, [description])
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
 * `sequence`: An array of requests to test. Each element can have these properties:

@@ -254,6 +254,43 @@ module.exports = {
 	},
 	
 	/**
+	 * Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request.
+	 * @param {object} request The intent request to modify.
+	 * @param {string} slotName The name of the slot to add the resolution to. If the slot does not exist it is added.
+	 * @param {string} slotType The type of the slot.
+	 * @param {string} value The value of the slot.
+	 * @return {object} the given intent request to allow chaining.
+	 */
+	addEntityResolutionNoMatchToRequest: function (request, slotName, slotType, value) {
+		'use strict';
+		if (!request) {
+			throw 'request must be specified to add entity resolution';
+		}
+		if (!slotName) {
+			throw 'slotName must be specified to add entity resolution';
+		}
+		if (!value) {
+			throw 'value must be specified to add entity resolution';
+		}
+		
+		if (!request.request.intent.slots[slotName]) {
+			request.request.intent.slots[slotName] = {name: slotName, value: value};
+		}
+		
+		request.request.intent.slots[slotName].resolutions = {
+			"resolutionsPerAuthority": [
+				{
+					"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
+					"status": {
+						"code": "ER_SUCCESS_NO_MATCH"
+					}
+				}
+			]
+		};
+		return request;
+	},
+	
+	/**
 	 * Tests the responses of a sequence of requests to the skill.
 	 * @param {object[]} sequence An array of requests to test. Each element can have these properties:
 	 * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
