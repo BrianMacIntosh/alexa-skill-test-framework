@@ -33,6 +33,7 @@
   "dependencies": {
     "assertion-error": "^1.0.2",
     "aws-lambda-mock-context": "^3.0.1",
+    "aws-sdk-mock": "^1.7.0",
     "uuid": "^3.0.1"
   },
   "optionalDependencies": {

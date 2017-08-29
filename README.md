@@ -36,6 +36,13 @@ Initializes i18n. You only need this if you use i18n in your skill, and you want
 Changes the locale used by the test framework and the skill. Default is 'en-US'.
 * `locale`: A string representing the locale to use.
 
+### alexaTest.setDynamoDBTable(tableName)
+Activates mocking of DynamoDB backed attributes.
+* `tableName`: The name of the DynamoDB Table to use
+
+## alexaTest.unmockDynamoDB()
+Removes the mock on the AWS SDK.
+
 ### alexaTest.setExtraFeature(key, state)
 Enables or disabled an optional test feature.
 * `key`: The key of the feature to change.
@@ -93,6 +100,8 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
   * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
   * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
+  * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
+  * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
 * `description`: An optional description for the mocha test
 
 ### alexaTest.t(arguments)

@@ -1,5 +1,6 @@
 const awsContext = require('aws-lambda-mock-context');
 const AssertionError = require('assertion-error');
+const AWSMOCK = require('aws-sdk-mock');
 const uuid = require('uuid');
 
 const CallbackContext = function (framework, sequenceIndex, locale, requestType) {
@@ -72,6 +73,11 @@ module.exports = {
 	locale: "en-US",
 	version: "1.0",
 	
+	// DynamoDB Mock
+	dynamoDBTable: null,
+	dynamoDBGetMock: null,
+	dynamoDBPutMock: null,
+	
 	//TODO: allow these to be enabled or disabled on a per-request basis
 	extraFeatures: {
 		/**
@@ -123,6 +129,36 @@ module.exports = {
 		if (this.i18n) {
 			this.i18n.changeLanguage(this.locale);
 		}
+	},
+	
+	/**
+	 * Activates mocking of DynamoDB backed attributes
+	 * @param {string} tableName name of the DynamoDB Table
+	 */
+	setDynamoDBTable: function (tableName) {
+		'use strict';
+		if (!tableName) {
+			throw "'tableName' argument must be provided.";
+		}
+		this.dynamoDBTable = tableName;
+		
+		let self = this;
+		AWSMOCK.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+			// Do not inline; resolution has to take place on call
+			self.dynamoDBGetMock(params, callback);
+		});
+		AWSMOCK.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
+			// Do not inline; resolution has to take place on call
+			self.dynamoDBPutMock(params, callback);
+		});
+	},
+	
+	/**
+	 * Reset the mock on the DynamoDB
+	 */
+	unmockDynamoDB: function () {
+		'use strict';
+		AWSMOCK.restore('DynamoDB.DocumentClient');
 	},
 	
 	/**
@@ -313,6 +349,8 @@ module.exports = {
 	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
 	 * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
 	 * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
+	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
+	 * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function (sequence, testDescription) {
@@ -354,13 +392,36 @@ module.exports = {
 						}
 						return ctx.succeed(result);
 					};
-					handler(request, ctx, callback, true);
 					
 					var requestType = request.request.type;
 					if (requestType === "IntentRequest") {
 						requestType = request.request.intent.name;
 					}
 					var context = new CallbackContext(self, sequenceIndex, locale, requestType);
+					
+					if (self.dynamoDBTable) {
+						
+						self.dynamoDBGetMock = (params, callback) => {
+							self._assertStringEqual(context, "TableName", params.TableName, self.dynamoDBTable);
+							self._assertStringEqual(context, "UserId", params.Key.userId, self.userId);
+							callback(null, {TableName: self.dynamoDBTable, Item: {userId: self.userId, mapAttr: currentItem.withStoredAttributes || {}}});
+						};
+						self.dynamoDBPutMock = (params, callback) => {
+							self._assertStringEqual(context, "TableName", params.TableName, self.dynamoDBTable);
+							self._assertStringEqual(context, "UserId", params.Item.userId, self.userId);
+							let storesAttributes = currentItem.storesAttributes;
+							if (storesAttributes) {
+								for (let att in storesAttributes) {
+									if (storesAttributes.hasOwnProperty(att)) {
+										self._assertStringEqual(context, att, params.Item.mapAttr[att], storesAttributes[att]);
+									}
+								}
+							}
+							callback(null, {});
+						};
+					}
+					
+					handler(request, ctx, callback, true);
 					
 					ctx.Promise
 						.then(response => {
