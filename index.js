@@ -92,12 +92,14 @@ module.exports = {
 	 * @param {object} index The object containing your skill's 'handler' method.
 	 * @param {string} appId The Skill's app ID. Looks like "amzn1.ask.skill.00000000-0000-0000-0000-000000000000".
 	 * @param {string} userId The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING"
+	 * @param {string} deviceId Optional The Amazon Device ID to test with. Looks like "amzn1.ask.device.LONG_STRING"
 	 */
-	initialize: function (index, appId, userId) {
+	initialize: function (index, appId, userId, deviceId) {
 		'use strict';
 		this.index = index;
 		this.appId = appId;
 		this.userId = userId;
+		this.deviceId = deviceId || 'amzn1.ask.device.VOID';
 	},
 	
 	/**
@@ -183,6 +185,7 @@ module.exports = {
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
+			"context": this._getContextData(),
 			"request": {
 				"type": "LaunchRequest",
 				"requestId": "EdwRequestId." + uuid.v4(),
@@ -211,6 +214,7 @@ module.exports = {
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
+			"context": this._getContextData(),
 			"request": {
 				"type": "IntentRequest",
 				"requestId": "EdwRequestId." + uuid.v4(),
@@ -232,6 +236,7 @@ module.exports = {
 		return {
 			"version": this.version,
 			"session": this._getSessionData(),
+			"context": this._getContextData(),
 			"request": {
 				"type": "SessionEndedRequest",
 				"requestId": "EdwRequestId." + uuid.v4(),
@@ -241,6 +246,32 @@ module.exports = {
 				//TODO: support error
 			}
 		};
+	},
+	
+	/**
+	 * Adds an AudioPlayer context to the given request.
+	 * @param {object} request The intent request to modify.
+	 * @param {string} token An opaque token that represents the audio stream described by this AudioPlayer object. You provide this token when sending the Play directive.
+	 * @param {string} offset Identifies a track’s offset in milliseconds at the time the request was sent. This is 0 if the track is at the beginning.
+	 * @param {string} activity Indicates the last known state of audio playback.
+	 * @return {object} the given intent request to allow chaining.
+	 */
+	addAudioPlayerContextToRequest: function (request, token, offset, activity) {
+		'use strict';
+		if (!request) {
+			throw 'request must be specified to add entity resolution';
+		}
+		
+		if (token) {
+			request.context.AudioPlayer.token = token;
+		}
+		if (offset) {
+			request.context.AudioPlayer.offsetInMilliseconds = offset;
+		}
+		if (activity) {
+			request.context.AudioPlayer.playerActivity = activity;
+		}
+		return request;
 	},
 	
 	/**
@@ -349,8 +380,11 @@ module.exports = {
 	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
 	 * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
 	 * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
-	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
+	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock.
 	 * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
+	 * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
+	 * `stopsStream`: Optional Boolean. Tests that the AudioPlayer is stopped.
+	 * `clearsQueue`: Optional String. Tests that the AudioPlayer clears the queue with the given clear behavior.
 	 * @param {string} testDescription An optional description for the mocha test
 	 */
 	test: function (sequence, testDescription) {
@@ -517,6 +551,8 @@ module.exports = {
 									});
 							}
 							
+							checkAudioPlayer(self, context, response, currentItem);
+							
 							// custom checks
 							if (currentItem.saysCallback) {
 								currentItem.saysCallback(context, actualSay);
@@ -631,6 +667,29 @@ module.exports = {
 	/**
 	 * Internal method.
 	 */
+	_getContextData: function () {
+		'use strict';
+		return {
+			"System": {
+				"application": {"applicationId": this.appId},
+				"user": {"userId": this.userId},
+				"device": {
+					"deviceId": this.deviceId,
+					"supportedInterfaces": {
+						"AudioPlayer": {}
+					}
+				},
+				"apiEndpoint": "https://api.amazonalexa.com/"
+			},
+			"AudioPlayer": {
+				"playerActivity": "IDLE"
+			}
+		};
+	},
+	
+	/**
+	 * Internal method.
+	 */
 	_getDirectiveFromResponse: function (response, type) {
 		'use strict';
 		let directives = response.response.directives;
@@ -642,5 +701,52 @@ module.exports = {
 			}
 		}
 		return undefined;
+	}
+};
+
+const checkAudioPlayer = (self, context, response, currentItem) => {
+	'use strict';
+	
+	if (currentItem.playsStream) {
+		let playDirective = self._getDirectiveFromResponse(response, 'AudioPlayer.Play');
+		if (!playDirective) {
+			context.assert({message: "the response did not play a stream"});
+			return;
+		}
+		
+		let playConfig = currentItem.playsStream;
+		self._assertStringEqual(context, "playBehavior", playDirective.playBehavior, playConfig.behavior);
+		
+		let stream = playDirective.audioItem.stream;
+		if (!stream.url.startsWith('https://')) {
+			context.assert({message: "the stream URL is not https"});
+		}
+		self._assertStringEqual(context, "url", stream.url, playConfig.url);
+		
+		if (playConfig.token) {
+			self._assertStringEqual(context, "token", stream.token, playConfig.token);
+		}
+		if (playConfig.previousToken) {
+			self._assertStringEqual(context, "expectedPreviousToken", stream.expectedPreviousToken, playConfig.previousToken);
+		}
+		if (playConfig.offset) {
+			self._assertStringEqual(context, "offsetInMilliseconds", stream.offsetInMilliseconds.toString(), playConfig.offset.toString());
+		}
+	}
+	
+	if (currentItem.stopsStream) {
+		if (!self._getDirectiveFromResponse(response, 'AudioPlayer.Stop')) {
+			context.assert({message: "the response did not stop the stream"});
+			return;
+		}
+	}
+	
+	if (currentItem.clearsQueue) {
+		let clearDirective = self._getDirectiveFromResponse(response, 'AudioPlayer.ClearQueue');
+		if (!clearDirective) {
+			context.assert({message: "the response did not clear the audio queue"});
+			return;
+		}
+		self._assertStringEqual(context, "clearBehavior", clearDirective.clearBehavior, currentItem.clearsQueue);
 	}
 };

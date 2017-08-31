@@ -21,12 +21,13 @@ For some simple examples, see the 'examples' directory.
 
 ## Test Framework Documentation
 
-### alexaTest.initialize(index, appId, userId)
+### alexaTest.initialize(index, appId, userId, deviceId)
 Initializes the test framework. Must be called before generating requests or running any tests.
 * `index`: The object containing your skill's 'handler' method. Must define a method called `handler(event, context, callback)`, which runs the skill.
   * The test framework passes 'true' as a fourth parameter to the handler. Obviously this should be used sparingly, if at all.
 * `appId`: The Skill's app ID. Looks like "amzn1.ask.skill.00000000-0000-0000-0000-000000000000".
 * `userId`: The Amazon User ID to test with. Looks like "amzn1.ask.account.LONG_STRING".
+* `deviceId`: Optional The Amazon Device ID to test with. Looks like "amzn1.ask.device.LONG_STRING"
 
 ### alexaTest.initializeI18N(resources)
 Initializes i18n. You only need this if you use i18n in your skill, and you want to use i18n to fetch result strings to test against. You must have installed the optional dependencies `i18n` and `i18next-sprintf-postprocessor`.
@@ -66,20 +67,27 @@ Returns a [SessionEndedRequest][sessionendedrequest docs]. The request can be pa
 * `reason`: The reason. See the [SessionEndedRequest][sessionendedrequest docs] documentation.
 * `locale`: Optionally, an override locale for the request.
 
-### alexaTest.addEntityResolutionToRequest(request, slotName, slotType, value, id)
+### addAudioPlayerContextToRequest(request, [token], [offset], [activity])
+Adds an AudioPlayer context to the given request. Returns the given request to allow call chaining.
+* `request`: The intent request to modify.
+* `token` An opaque token that represents the audio stream described by this AudioPlayer object. You provide this token when sending the Play directive.
+* `offset` Identifies a track’s offset in milliseconds at the time the request was sent. This is 0 if the track is at the beginning.
+* `activity` Indicates the last known state of audio playback.
+
+### alexaTest.addEntityResolutionToRequest(request, slotName, slotType, value, [id])
 Adds an entity resolution to the given request. Returns the given request to allow call chaining.
-* `request` The intent request to modify.
-* `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
-* `slotType` The type of the slot.
-* `value` The value of the slot.
-* `id` Optionally, the id of the resolved entity.
+* `request`: The intent request to modify.
+* `slotName`: The name of the slot to add the resolution to. If the slot does not exist it is added.
+* `slotType`: The type of the slot.
+* `value`: The value of the slot.
+* `id`: Optionally, the id of the resolved entity.
 
 ### alexaTest.addEntityResolutionNoMatchToRequest(request, slotName, slotType, value)
 Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request. Returns the given request to allow call chaining.
-* `request` The intent request to modify.
-* `slotName` The name of the slot to add the resolution to. If the slot does not exist it is added.
-* `slotType` The type of the slot.
-* `value` The value of the slot.
+* `request`: The intent request to modify.
+* `slotName`: The name of the slot to add the resolution to. If the slot does not exist it is added.
+* `slotType`: The type of the slot.
+* `value`: The value of the slot.
 
 ### alexaTest.test(sequence, [description])
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
@@ -102,7 +110,17 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
   * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
   * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
+  * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
+  * `stopsStream`: Optional Boolean. Tests that the AudioPlayer is stopped.
+  * `clearsQueue`: Optional String. Tests that the AudioPlayer clears the queue with the given clear behavior.
 * `description`: An optional description for the mocha test
+
+The `playsStream` Object has the following properties:
+* `behavior`: String. The expected playBehavior of the AudioPlayer.
+* `url`: String. The expected URL of the stream.
+* `token`: Optional String. The expected token for the stream.
+* `previousToken`: Optional String. The expected previousToken for the stream.
+* `offset`: Optional Integer. The expected offset of the stream.
 
 ### alexaTest.t(arguments)
 Forwards the request to `alexaTest.i18n.t` and returns the result. You must have called `alexaTest.initializeI18N` previously.
