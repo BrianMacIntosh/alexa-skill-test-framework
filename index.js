@@ -729,7 +729,7 @@ const checkAudioPlayer = (self, context, response, currentItem) => {
 		if (playConfig.previousToken) {
 			self._assertStringEqual(context, "expectedPreviousToken", stream.expectedPreviousToken, playConfig.previousToken);
 		}
-		if (playConfig.offset) {
+		if (playConfig.offset || playConfig.offset === 0) {
 			self._assertStringEqual(context, "offsetInMilliseconds", stream.offsetInMilliseconds.toString(), playConfig.offset.toString());
 		}
 	}
