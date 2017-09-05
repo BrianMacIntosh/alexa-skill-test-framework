@@ -20,6 +20,11 @@
     "email": "brianamacintosh@gmail.com",
     "url": "http://brianmacintosh.com/"
   },
+  "contributors": {
+    "name": "Thorsten Hoeger",
+    "email":"thorsten.hoeger@taimos.de",
+    "url":"https://www.taimos.de"
+  },
   "scripts": {
     "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha 'examples/**/*-tests.js' --slow 200"
   },
