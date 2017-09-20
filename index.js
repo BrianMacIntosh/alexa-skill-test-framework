@@ -323,6 +323,21 @@ module.exports = {
 	},
 	
 	/**
+	 * Adds multiple entity resolutions to the given request.
+	 * @param {object} request The intent request to modify.
+	 * @param {array} resolutions The array containing the resolutions to add
+	 * @return {object} the given intent request to allow chaining.
+	 */
+	addEntityResolutionsToRequest: function (request, resolutions) {
+		'use strict';
+		let alexaTest = this;
+		resolutions.forEach(resolution => {
+			alexaTest.addEntityResolutionToRequest(request, resolution.slotName, resolution.slotType, resolution.value, resolution.id);
+		});
+		return request;
+	},
+	
+	/**
 	 * Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request.
 	 * @param {object} request The intent request to modify.
 	 * @param {string} slotName The name of the slot to add the resolution to. If the slot does not exist it is added.

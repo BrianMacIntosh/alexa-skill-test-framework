@@ -33,7 +33,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's AMAZON.HelpIntent
 	describe('AMAZON.HelpIntent', function () {
 		alexaTest.test([
@@ -43,7 +43,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's AMAZON.HelpIntent followed by the skill's AMAZON.CancelIntent
 	describe('AMAZON.HelpIntent into AMAZON.CancelIntent', function () {
 		alexaTest.test([
@@ -57,7 +57,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's AMAZON.HelpIntent followed by the skill's AMAZON.StopIntent
 	describe('AMAZON.HelpIntent into AMAZON.StopIntent', function () {
 		alexaTest.test([
@@ -71,7 +71,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's AMAZON.StopIntent
 	describe('AMAZON.StopIntent', function () {
 		alexaTest.test([
@@ -81,7 +81,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's AMAZON.CancelIntent
 	describe('AMAZON.CancelIntent', function () {
 		alexaTest.test([
@@ -91,20 +91,20 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's CityFactIntent
 	describe('CityFactIntent', function () {
 		const slot = {'City': 'New York'};
 		const requestWithSlot = alexaTest.getIntentRequest('CityFactIntent', slot);
-
+		
 		function assertResponseText(context, response) {
 			const outputSpeech = response.response.outputSpeech.ssml.replace('<speak>', '').replace('</speak>', '');
-
+			
 			if (CITY_FACTS_DIALOGUE['new york'].indexOf(outputSpeech.trim()) < 0) {
 				context.assert({message: 'Expected dialogue to contain a fact about New York'});
 			}
 		}
-
+		
 		alexaTest.test([
 			{
 				request: requestWithSlot,
@@ -112,7 +112,7 @@ describe('Slots and synonyms example skill tests', function () {
 			}
 		]);
 	});
-
+	
 	// tests the behavior of the skill's CityFactIntent with synonyms
 	describe('CityFactIntent with synonyms', function () {
 		const slotWithSynonym = {'City': 'The big apple'};
@@ -123,15 +123,43 @@ describe('Slots and synonyms example skill tests', function () {
 			'New York',
 			'id'
 		);
-
+		
 		function assertResponseText(context, response) {
 			const outputSpeech = response.response.outputSpeech.ssml.replace('<speak>', '').replace('</speak>', '');
-
+			
 			if (CITY_FACTS_DIALOGUE['new york'].indexOf(outputSpeech.trim()) < 0) {
 				context.assert({message: 'Expected dialogue to contain a fact about New York'});
 			}
 		}
-
+		
+		alexaTest.test([
+			{
+				request: requestWithEntityResolution,
+				callback: assertResponseText, shouldEndSession: true, repromptsNothing: true
+			}
+		]);
+	});
+	
+	describe('CityFactIntent with synonyms (array)', function () {
+		const slotWithSynonym = {'City': 'The big apple'};
+		const requestWithEntityResolution = alexaTest.addEntityResolutionsToRequest(
+			alexaTest.getIntentRequest('CityFactIntent', slotWithSynonym),
+			[{
+				slotName: 'City',
+				slotType: 'CITY_NAMES',
+				value: 'New York',
+				id: 'id'
+			}]
+		);
+		
+		function assertResponseText(context, response) {
+			const outputSpeech = response.response.outputSpeech.ssml.replace('<speak>', '').replace('</speak>', '');
+			
+			if (CITY_FACTS_DIALOGUE['new york'].indexOf(outputSpeech.trim()) < 0) {
+				context.assert({message: 'Expected dialogue to contain a fact about New York'});
+			}
+		}
+		
 		alexaTest.test([
 			{
 				request: requestWithEntityResolution,

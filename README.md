@@ -82,6 +82,11 @@ Adds an entity resolution to the given request. Returns the given request to all
 * `value`: The value of the slot.
 * `id`: Optionally, the id of the resolved entity.
 
+###	alexaTest.addEntityResolutionsToRequest(request, resolutions)
+Adds multiple entity resolutions to the given request. Returns the given request to allow call chaining.
+* `request`: The intent request to modify.
+* `resolutions`: The array containing the resolutions to add
+
 ### alexaTest.addEntityResolutionNoMatchToRequest(request, slotName, slotType, value)
 Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request. Returns the given request to allow call chaining.
 * `request`: The intent request to modify.
