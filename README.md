@@ -41,7 +41,7 @@ Changes the locale used by the test framework and the skill. Default is 'en-US'.
 Activates mocking of DynamoDB backed attributes.
 * `tableName`: The name of the DynamoDB Table to use
 
-## alexaTest.unmockDynamoDB()
+### alexaTest.unmockDynamoDB()
 Removes the mock on the AWS SDK.
 
 ### alexaTest.setExtraFeature(key, state)
