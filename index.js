@@ -380,10 +380,10 @@ module.exports = {
 	 * Tests the responses of a sequence of requests to the skill.
 	 * @param {object[]} sequence An array of requests to test. Each element can have these properties:
 	 * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
-	 * `says`: Optional String. Tests that the speech output from the request is the string specified.
+	 * `says`: Optional String or Array of Strings. Tests that the speech output from the request is the string specified.
 	 * `saysLike`: Optional String. Tests that the speech output from the request contains the string specified.
 	 * `saysNothing`: Optional Boolean. If true, tests that the response has no speech output.
-	 * `reprompts`: Optional String. Tests that the reprompt output from the request is the string specified.
+	 * `reprompts`: Optional String or Array of Strings. Tests that the reprompt output from the request is the string specified.
 	 * `repromptsLike`: Optional String. Tests that the reprompt output from the request contains the string specified.
 	 * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
 	 * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
@@ -485,8 +485,12 @@ module.exports = {
 							
 							// check the returned speech
 							if (currentItem.says !== undefined) {
-								let expected = "<speak> " + currentItem.says + " </speak>";
-								self._assertStringEqual(context, "speech", actualSay, expected);
+								if (Array.isArray(currentItem.says)) {
+									self._assertStringOneOf(context, "speech", actualSay, currentItem.says.map(item => `<speak> ${item} </speak>`));
+								} else {
+									let expected = `<speak> ${currentItem.says} </speak>`;
+									self._assertStringEqual(context, "speech", actualSay, expected);
+								}
 							}
 							if (currentItem.saysLike !== undefined) {
 								self._assertStringContains(context, "speech", actualSay, currentItem.saysLike);
@@ -495,8 +499,12 @@ module.exports = {
 								self._assertStringMissing(context, "speech", actualSay);
 							}
 							if (currentItem.reprompts !== undefined) {
-								let expected = "<speak> " + currentItem.reprompts + " </speak>";
-								self._assertStringEqual(context, "reprompt", actualReprompt, expected);
+								if (Array.isArray(currentItem.reprompts)) {
+									self._assertStringOneOf(context, "reprompt", actualReprompt, currentItem.reprompts.map(item => `<speak> ${item} </speak>`));
+								} else {
+									let expected = `<speak> ${currentItem.reprompts} </speak>`;
+									self._assertStringEqual(context, "reprompt", actualReprompt, expected);
+								}
 							}
 							if (currentItem.repromptsLike !== undefined) {
 								self._assertStringContains(context, "reprompt", actualReprompt, currentItem.repromptsLike);
@@ -614,6 +622,25 @@ module.exports = {
 					operator: "==", showDiff: true
 				});
 		}
+	},
+	
+	/**
+	 * Internal method. Asserts if the string is not part of the array.
+	 */
+	_assertStringOneOf: function (context, name, actual, expectedArray) {
+		'use strict';
+		for (let i = 0; i < expectedArray.length; i++) {
+			if (actual === expectedArray[i]) {
+				return;
+			}
+		}
+		context.assert(
+			{
+				message: "the response did not contain a valid speechOutput",
+				expected: "one of [" + expectedArray.map(text => `"${text}"`).join(', ') + "]",
+				actual: actual,
+				operator: "==", showDiff: true
+			});
 	},
 	
 	/**
