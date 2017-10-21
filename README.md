@@ -98,10 +98,10 @@ Adds an entity resolution with code ER_SUCCESS_NO_MATCH to the given request. Re
 Tests the skill with a sequence of requests and expected responses. This method should be called from inside a Mocha `describe` block.
 * `sequence`: An array of requests to test. Each element can have these properties:
   * `request`: The request to run. Generate these with one of the above `getFooRequest` methods.
-  * `says`: Optional String. Tests that the speech output from the request is the string specified.
+  * `says`: Optional String or Array of Strings. Tests that the speech output from the request is the string specified.
   * `saysLike`: Optional String. Tests that the speech output from the request contains the string specified.
   * `saysNothing`: Optional Boolean. If true, tests that the response has no speech output.
-  * `reprompts`: Optional String. Tests that the reprompt output from the request is the string specified.
+  * `reprompts`: Optional String or Array of Strings. Tests that the reprompt output from the request is the string specified.
   * `repromptsLike`: Optional String. Tests that the reprompt output from the request contains the string specified.
   * `repromptsNothing`: Optional Boolean. If true, tests that the response has no reprompt output.
   * `shouldEndSession`: Optional Boolean. If true, tests that the response to the request ends or does not end the session.
