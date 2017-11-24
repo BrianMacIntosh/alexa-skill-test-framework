@@ -480,8 +480,8 @@ module.exports = {
 								response = response.toJSON();
 							}
 							
-							var actualSay = response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
-							var actualReprompt = response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
+							var actualSay = response.response && response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
+							var actualReprompt = response.response && response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
 							
 							// check the returned speech
 							if (currentItem.says !== undefined) {
