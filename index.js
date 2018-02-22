@@ -208,7 +208,7 @@ module.exports = {
 			slots = {};
 		}
 		else {
-			slots = Object.create(requestSlots);
+			slots = JSON.parse(JSON.stringify(requestSlots));
 			for (var key in slots) {
 				slots[key] = {name: key, value: slots[key]};
 			}
