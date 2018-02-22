@@ -198,15 +198,17 @@ module.exports = {
 	/**
 	 * Generates an intent request object.
 	 * @param {string} intentName The name of the intent to call.
-	 * @param {object} slots Slot data to call the intent with.
+	 * @param {object} requestSlots Slot data to call the intent with.
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
-	getIntentRequest: function (intentName, slots, locale) {
+	getIntentRequest: function (intentName, requestSlots, locale) {
 		'use strict';
-		if (!slots) {
+		var slots;
+		if (!requestSlots) {
 			slots = {};
 		}
 		else {
+			slots = Object.create(requestSlots);
 			for (var key in slots) {
 				slots[key] = {name: key, value: slots[key]};
 			}
