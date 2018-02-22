@@ -198,19 +198,19 @@ module.exports = {
 	/**
 	 * Generates an intent request object.
 	 * @param {string} intentName The name of the intent to call.
-	 * @param {object} requestSlots Slot data to call the intent with.
+	 * @param {object} slots Slot data to call the intent with.
 	 * @param {string} locale Optional locale to use. If not specified, uses the locale specified by `setLocale`.
 	 */
-	getIntentRequest: function (intentName, requestSlots, locale) {
+	getIntentRequest: function (intentName, slots, locale) {
 		'use strict';
-		var slots;
-		if (!requestSlots) {
-			slots = {};
+		var requestSlots;
+		if (!slots) {
+			requestSlots = {};
 		}
 		else {
-			slots = JSON.parse(JSON.stringify(requestSlots));
-			for (var key in slots) {
-				slots[key] = {name: key, value: slots[key]};
+			requestSlots = JSON.parse(JSON.stringify(slots));
+			for (var key in requestSlots) {
+				requestSlots[key] = {name: key, value: requestSlots[key]};
 			}
 		}
 		return {
@@ -222,7 +222,7 @@ module.exports = {
 				"requestId": "EdwRequestId." + uuid.v4(),
 				"timestamp": new Date().toISOString(),
 				"locale": locale || this.locale,
-				"intent": {"name": intentName, "slots": slots}
+				"intent": {"name": intentName, "slots": requestSlots}
 			},
 		};
 	},
