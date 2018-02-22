@@ -203,12 +203,14 @@ module.exports = {
 	 */
 	getIntentRequest: function (intentName, slots, locale) {
 		'use strict';
+		var requestSlots;
 		if (!slots) {
-			slots = {};
+			requestSlots = {};
 		}
 		else {
-			for (var key in slots) {
-				slots[key] = {name: key, value: slots[key]};
+			requestSlots = JSON.parse(JSON.stringify(slots));
+			for (var key in requestSlots) {
+				requestSlots[key] = {name: key, value: requestSlots[key]};
 			}
 		}
 		return {
@@ -220,7 +222,7 @@ module.exports = {
 				"requestId": "EdwRequestId." + uuid.v4(),
 				"timestamp": new Date().toISOString(),
 				"locale": locale || this.locale,
-				"intent": {"name": intentName, "slots": slots}
+				"intent": {"name": intentName, "slots": requestSlots}
 			},
 		};
 	},
