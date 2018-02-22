@@ -28,7 +28,7 @@
     }
   ],
   "scripts": {
-    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha 'examples/**/*-tests.js' --slow 200"
+    "test": "eslint index.js && mocha --recursive examples/**/*-tests.js --slow 200"
   },
   "files": [
     "index.js",
