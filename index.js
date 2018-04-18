@@ -54,13 +54,13 @@ CallbackContext.prototype._questionMarkCheck = function (response) {
 			break;
 		}
 	}
-	if (response.response.shouldEndSession && hasQuestionMark) {
+	if (response.response.shouldEndSession !== false && hasQuestionMark) {
 		this.assert(
 			{
 				message: "Possible Certification Problem: The response ends the session but contains a question mark."
 			});
 	}
-	if (!response.response.shouldEndSession && !hasQuestionMark) {
+	if (response.response.shouldEndSession === false && !hasQuestionMark) {
 		this.assert(
 			{
 				message: "Possible Certification Problem: The response keeps the session open but does not contain a question mark."
@@ -472,7 +472,14 @@ module.exports = {
 						};
 					}
 					
-					handler(request, ctx, callback, true);
+					var result = handler(request, ctx, callback, true);
+					if (result) {
+						if (result.then) {
+							result.then(ctx.succeed, ctx.fail);
+						} else {
+							ctx.succeed(result);
+						}
+					}
 					
 					ctx.Promise
 						.then(response => {
@@ -483,15 +490,17 @@ module.exports = {
 							}
 							
 							var actualSay = response.response && response.response.outputSpeech ? response.response.outputSpeech.ssml : undefined;
-							var actualReprompt = response.response && response.response.reprompt ? response.response.reprompt.outputSpeech.ssml : undefined;
+							var actualReprompt = response.response && response.response.reprompt && response.response.reprompt.outputSpeech ? response.response.reprompt.outputSpeech.ssml : undefined;
 							
 							// check the returned speech
 							if (currentItem.says !== undefined) {
+								self._assertStringPresent(context, 'speech', actualSay);
+								var trimActualSay = actualSay.substring(7);
+								trimActualSay = trimActualSay.substring(0, trimActualSay.length - 8).trim();
 								if (Array.isArray(currentItem.says)) {
-									self._assertStringOneOf(context, "speech", actualSay, currentItem.says.map(item => `<speak> ${item} </speak>`));
+									self._assertStringOneOf(context, "speech", trimActualSay, currentItem.says);
 								} else {
-									let expected = `<speak> ${currentItem.says} </speak>`;
-									self._assertStringEqual(context, "speech", actualSay, expected);
+									self._assertStringEqual(context, "speech", trimActualSay, currentItem.says);
 								}
 							}
 							if (currentItem.saysLike !== undefined) {
@@ -501,11 +510,13 @@ module.exports = {
 								self._assertStringMissing(context, "speech", actualSay);
 							}
 							if (currentItem.reprompts !== undefined) {
+								self._assertStringPresent(context, 'reprompt', actualReprompt);
+								var trimActualReprompt = actualReprompt.substring(7);
+								trimActualReprompt = trimActualReprompt.substring(0, trimActualReprompt.length - 8).trim();
 								if (Array.isArray(currentItem.reprompts)) {
-									self._assertStringOneOf(context, "reprompt", actualReprompt, currentItem.reprompts.map(item => `<speak> ${item} </speak>`));
+									self._assertStringOneOf(context, "reprompt", trimActualReprompt, currentItem.reprompts);
 								} else {
-									let expected = `<speak> ${currentItem.reprompts} </speak>`;
-									self._assertStringEqual(context, "reprompt", actualReprompt, expected);
+									self._assertStringEqual(context, "reprompt", trimActualReprompt, currentItem.reprompts);
 								}
 							}
 							if (currentItem.repromptsLike !== undefined) {
@@ -559,7 +570,7 @@ module.exports = {
 							}
 							
 							// check the shouldEndSession flag
-							if (currentItem.shouldEndSession === true && !response.response.shouldEndSession) {
+							if (currentItem.shouldEndSession === true && response.response.shouldEndSession === false) {
 								context.assert(
 									{
 										message: "the response did not end the session",
@@ -567,7 +578,7 @@ module.exports = {
 										actual: "the response did not end the session"
 									});
 							}
-							else if (currentItem.shouldEndSession === false && response.response.shouldEndSession) {
+							else if (currentItem.shouldEndSession === false && response.response.shouldEndSession !== false) {
 								context.assert(
 									{
 										message: "the response ended the session",
@@ -670,6 +681,21 @@ module.exports = {
 				{
 					message: "the response unexpectedly returned a " + name + " value",
 					expected: "undefined", actual: actual ? actual : String(actual),
+					operator: "==", showDiff: true
+				});
+		}
+	},
+	
+	/**
+	 * Internal method. Asserts if the string exists.
+	 */
+	_assertStringPresent: function (context, name, actual) {
+		'use strict';
+		if (!actual) {
+			context.assert(
+				{
+					message: "the response did not return a " + name + " value",
+					expected: "some value", actual: actual ? actual : String(actual),
 					operator: "==", showDiff: true
 				});
 		}
