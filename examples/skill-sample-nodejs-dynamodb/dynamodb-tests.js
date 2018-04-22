@@ -43,6 +43,22 @@ describe("DynamoDB Skill", () => {
 		]);
 	});
 	
+	// tests the behavior of the skill's HelloWorldIntent using validation function
+	describe("HelloWorldIntent", () => {
+		alexaTest.test([
+			{
+				request: alexaTest.getIntentRequest("HelloWorldIntent"),
+				says: "Hello World!", repromptsNothing: true, shouldEndSession: true,
+				hasAttributes: {
+					foo: value => {return value === 'bar';}
+				},
+				storesAttributes: {
+					foo: value => {return value === 'bar';}
+				}
+			}
+		]);
+	});
+	
 	// tests the behavior of the skill's HelloWorldIntent
 	describe("SayGoodbye", () => {
 		alexaTest.test([

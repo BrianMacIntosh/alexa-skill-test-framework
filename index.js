@@ -394,10 +394,10 @@ module.exports = {
 	 * `elicitsSlot`: Optional String. Tests that the response asks Alexa to elicit the given slot.
 	 * `confirmsSlot`: Optional String. Tests that the response asks Alexa to confirm the given slot.
 	 * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
-	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values.
+	 * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values. Values can be strings or functions testing the value.
 	 * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
 	 * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
-	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock.
+	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock. Values can be strings or functions testing the value.
 	 * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
 	 * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
 	 * `stopsStream`: Optional Boolean. Tests that the AudioPlayer is stopped.
@@ -464,7 +464,13 @@ module.exports = {
 							if (storesAttributes) {
 								for (let att in storesAttributes) {
 									if (storesAttributes.hasOwnProperty(att)) {
-										self._assertStringEqual(context, att, params.Item.mapAttr[att], storesAttributes[att]);
+										if (typeof storesAttributes[att] === "function") {
+											if (!storesAttributes[att](params.Item.mapAttr[att])) {
+												context.assert({message: "the stored attribute " + att + " did not contain the correct value. Value was: " + params.Item.mapAttr[att]});
+											}
+										} else {
+											self._assertStringEqual(context, att, params.Item.mapAttr[att], storesAttributes[att]);
+										}
 									}
 								}
 							}
@@ -548,7 +554,13 @@ module.exports = {
 							if (currentItem.hasAttributes) {
 								for (let att in currentItem.hasAttributes) {
 									if (currentItem.hasAttributes.hasOwnProperty(att)) {
-										self._assertStringEqual(context, att, response.sessionAttributes[att], currentItem.hasAttributes[att]);
+										if (typeof currentItem.hasAttributes[att] === "function") {
+											if (!currentItem.hasAttributes[att](response.sessionAttributes[att])) {
+												context.assert({message: "the attribute " + att + " did not contain the correct value. Value was: " + response.sessionAttributes[att]});
+											}
+										} else {
+											self._assertStringEqual(context, att, response.sessionAttributes[att], currentItem.hasAttributes[att]);
+										}
 									}
 								}
 							}
