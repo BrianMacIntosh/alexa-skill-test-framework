@@ -40,6 +40,8 @@ Changes the locale used by the test framework and the skill. Default is 'en-US'.
 ### alexaTest.setDynamoDBTable(tableName)
 Activates mocking of DynamoDB backed attributes.
 * `tableName`: The name of the DynamoDB Table to use
+* `partitionKeyName`: the key to be used as id (default: userId)
+* `attributesName`: the key to be used for the attributes (default: mapAttr)
 
 ### alexaTest.unmockDynamoDB()
 Removes the mock on the AWS SDK.

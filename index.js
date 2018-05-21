@@ -75,6 +75,8 @@ module.exports = {
 	
 	// DynamoDB Mock
 	dynamoDBTable: null,
+	partitionKeyName: null,
+	attributesName: null,
 	dynamoDBGetMock: null,
 	dynamoDBPutMock: null,
 	
@@ -136,13 +138,17 @@ module.exports = {
 	/**
 	 * Activates mocking of DynamoDB backed attributes
 	 * @param {string} tableName name of the DynamoDB Table
+	 * @param {string} partitionKeyName the key to be used as id (default: userId)
+	 * @param {string} attributesName the key to be used for the attributes (default: mapAttr)
 	 */
-	setDynamoDBTable: function (tableName) {
+	setDynamoDBTable: function (tableName, partitionKeyName, attributesName) {
 		'use strict';
 		if (!tableName) {
 			throw "'tableName' argument must be provided.";
 		}
 		this.dynamoDBTable = tableName;
+		this.partitionKeyName = partitionKeyName || 'userId';
+		this.attributesName = attributesName || 'mapAttr';
 		
 		let self = this;
 		AWSMOCK.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
@@ -451,25 +457,29 @@ module.exports = {
 					var context = new CallbackContext(self, sequenceIndex, locale, requestType);
 					
 					if (self.dynamoDBTable) {
-						
 						self.dynamoDBGetMock = (params, callback) => {
 							self._assertStringEqual(context, "TableName", params.TableName, self.dynamoDBTable);
-							self._assertStringEqual(context, "UserId", params.Key.userId, self.userId);
-							callback(null, {TableName: self.dynamoDBTable, Item: {userId: self.userId, mapAttr: currentItem.withStoredAttributes || {}}});
+							self._assertStringEqual(context, "UserId", params.Key[self.partitionKeyName], self.userId);
+							
+							const Item = {};
+							Item[self.partitionKeyName] = self.userId;
+							Item[self.attributesName] = currentItem.withStoredAttributes || {};
+							callback(null, {TableName: self.dynamoDBTable, Item});
 						};
 						self.dynamoDBPutMock = (params, callback) => {
 							self._assertStringEqual(context, "TableName", params.TableName, self.dynamoDBTable);
-							self._assertStringEqual(context, "UserId", params.Item.userId, self.userId);
+							self._assertStringEqual(context, "UserId", params.Item[self.partitionKeyName], self.userId);
 							let storesAttributes = currentItem.storesAttributes;
 							if (storesAttributes) {
 								for (let att in storesAttributes) {
 									if (storesAttributes.hasOwnProperty(att)) {
+										const storedAttr = params.Item[self.attributesName][att];
 										if (typeof storesAttributes[att] === "function") {
-											if (!storesAttributes[att](params.Item.mapAttr[att])) {
-												context.assert({message: "the stored attribute " + att + " did not contain the correct value. Value was: " + params.Item.mapAttr[att]});
+											if (!storesAttributes[att](storedAttr)) {
+												context.assert({message: "the stored attribute " + att + " did not contain the correct value. Value was: " + storedAttr});
 											}
 										} else {
-											self._assertStringEqual(context, att, params.Item.mapAttr[att], storesAttributes[att]);
+											self._assertStringEqual(context, att, storedAttr, storesAttributes[att]);
 										}
 									}
 								}
