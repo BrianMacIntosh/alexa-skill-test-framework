@@ -404,6 +404,7 @@ module.exports = {
 	 * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
 	 * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
 	 * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock. Values can be strings or functions testing the value.
+	 * `withSessionAttributes`: Optional Object. The session attributes to initialize the an intent request with. Values can be strings, booleans, or integers.
 	 * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB.
 	 * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
 	 * `stopsStream`: Optional Boolean. Tests that the AudioPlayer is stopped.
@@ -448,6 +449,12 @@ module.exports = {
 							return ctx.fail(err);
 						}
 						return ctx.succeed(result);
+					};
+
+					// adds values from withSessionAttributes to the session
+					if (currentItem.withSessionAttributes) {
+						var session = request.session.attributes;
+						for(var x in currentItem.withSessionAttributes) session[x] = currentItem.withSessionAttributes[x];
 					};
 					
 					var requestType = request.request.type;
