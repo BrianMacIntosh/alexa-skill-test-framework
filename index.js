@@ -73,9 +73,9 @@ module.exports = {
 	locale: "en-US",
 	version: "1.0",
 	
-  // lambda mock context options
-  mockContextOptions: {},
-  
+	// lambda mock context options
+	mockContextOptions: {},
+	
 	// DynamoDB Mock
 	dynamoDBTable: null,
 	partitionKeyName: null,
@@ -137,18 +137,18 @@ module.exports = {
 			this.i18n.changeLanguage(this.locale);
 		}
 	},
-
-  /**
-   * Set lambda mock context options
-   * @param {object} aws-lambda-mock-context options
-   */
-  setMockContextOptions: function (opts) {
-    'use strict';
-    if (!opts) {
-      throw "'opts' argument must be provided.";
-    }
-    this.mockContextOptions = opts;
-  },
+	
+	/**
+	 * Set lambda mock context options
+	 * @param {object} aws-lambda-mock-context options
+	 */
+	setMockContextOptions: function (opts) {
+		'use strict';
+		if (!opts) {
+			throw "'opts' argument must be provided.";
+		}
+		this.mockContextOptions = opts;
+	},
 	
 	/**
 	 * Activates mocking of DynamoDB backed attributes
