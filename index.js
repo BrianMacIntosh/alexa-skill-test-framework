@@ -322,25 +322,41 @@ module.exports = {
 			request.request.intent.slots[slotName] = {name: slotName, value: value};
 		}
 		
-		if (!request.request.intent.slots[slotName].resolutions) {
+		const authority = "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType;
+		var valueAdded = false;
+		if (request.request.intent.slots[slotName].resolutions) {
+			request.request.intent.slots[slotName].resolutions.resolutionsPerAuthority.forEach(rpa => {
+				if (!valueAdded && (rpa.authority === authority)) {
+					rpa.values.push({
+						"value": {
+							"name": value,
+							"id": id
+						}
+					});
+					valueAdded = true;
+				}
+			});
+		} else {
 			request.request.intent.slots[slotName].resolutions = {
 				"resolutionsPerAuthority": []
 			};
 		}
-		request.request.intent.slots[slotName].resolutions.resolutionsPerAuthority.push({
-			"authority": "amzn1.er-authority.echo-sdk." + this.appId + "." + slotType,
-			"status": {
-				"code": "ER_SUCCESS_MATCH"
-			},
-			"values": [
-				{
-					"value": {
-						"name": value,
-						"id": id
+		if (!valueAdded) {
+			request.request.intent.slots[slotName].resolutions.resolutionsPerAuthority.push({
+				"authority": authority,
+				"status": {
+					"code": "ER_SUCCESS_MATCH"
+				},
+				"values": [
+					{
+						"value": {
+							"name": value,
+							"id": id
+						}
 					}
-				}
-			]
-		});
+				]
+			});
+		}
 		
 		return request;
 	},
