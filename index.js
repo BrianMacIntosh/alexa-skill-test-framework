@@ -622,10 +622,9 @@ module.exports = {
 							if (currentItem.hasCardContent) {
 								if (!response.response.card) {
 									context.assert({message: "the response did not contain a card"});
+								} else if (response.response.card.type !== "Simple") {
+									context.assert({ message: "the card in the response was not a simple card" });
 								} else {
-									if (response.response.card.type !== 'Simple') {
-										context.assert({ message: "the card in the response was not a simple card" });
-									}
 									self._assertStringEqual(context, "cardContent", response.response.card.content, currentItem.hasCardContent);
 								}
 							}
@@ -633,10 +632,9 @@ module.exports = {
 							if (currentItem.hasCardContentLike) {
 								if (!response.response.card) {
 									context.assert({ message: "the response did not contain a card" });
+								} else if (response.response.card.type !== "Simple") {
+									context.assert({ message: "the card in the response was not a simple card" });
 								} else {
-									if (response.response.card.type !== 'Simple') {
-										context.assert({ message: "the card in the response was not a simple card" });
-									}
 									self._assertStringContains(context, "cardContent", response.response.card.content, currentItem.hasCardContentLike);
 								}
 							}
@@ -644,10 +642,9 @@ module.exports = {
 							if (currentItem.hasCardText) {
 								if (!response.response.card) {
 									context.assert({ message: "the response did not contain a card" });
+								} else if (response.response.card.type !== "Standard") {
+									context.assert({ message: "the card in the response was not a standard card" });
 								} else {
-									if (response.response.card.type !== 'Standard') {
-										context.assert({ message: "the card in the response was not a standard card" });
-									}
 									self._assertStringEqual(context, "cardText", response.response.card.text, currentItem.hasCardText);
 								}
 							}
@@ -655,10 +652,9 @@ module.exports = {
 							if (currentItem.hasCardTextLike) {
 								if (!response.response.card) {
 									context.assert({ message: "the response did not contain a card" });
+								} else if (response.response.card.type !== "Standard") {
+									context.assert({ message: "the card in the response was not a standard card" });
 								} else {
-									if (response.response.card.type !== 'Standard') {
-										context.assert({ message: "the card in the response was not a standard card" });
-									}
 									self._assertStringContains(context, "cardText", response.response.card.text, currentItem.hasCardTextLike);
 								}
 							}
@@ -666,13 +662,11 @@ module.exports = {
 							if (currentItem.hasSmallImageUrlLike) {
 								if (!response.response.card) {
 									context.assert({ message: "the response did not contain a card" });
+								} else if (response.response.card.type !== "Standard") {
+									context.assert({ message: "the card in the response was not a standard card" });
+								} else if (!response.response.card.image) {
+									context.assert({ message: "the card in the response did not contain an image" });
 								} else {
-									if (response.response.card.type !== 'Standard') {
-										context.assert({ message: "the card in the response was not a standard card" });
-									}
-									if (!response.response.card.image) {
-										context.assert({ message: "the card in the response did not contain an image" });
-									}
 									self._assertStringContains(context, "smallImageUrl", response.response.card.image.smallImageUrl, currentItem.hasSmallImageUrlLike);
 								}
 							}
@@ -680,13 +674,11 @@ module.exports = {
 							if (currentItem.hasLargeImageUrlLike) {
 								if (!response.response.card) {
 									context.assert({ message: "the response did not contain a card" });
+								} else if (response.response.card.type !== "Standard") {
+									context.assert({ message: "the card in the response was not a standard card" });
+								} else if (!response.response.card.image) {
+									context.assert({ message: "the card in the response did not contain an image" });
 								} else {
-									if (response.response.card.type !== 'Standard') {
-										context.assert({ message: "the card in the response was not a standard card" });
-									}
-									if (!response.response.card.image) {
-										context.assert({ message: "the card in the response did not contain an image" });
-									}
 									self._assertStringContains(context, "largeImageUrl", response.response.card.image.largeImageUrl, currentItem.hasLargeImageUrlLike);
 								}
 							}
