@@ -114,7 +114,12 @@ Tests the skill with a sequence of requests and expected responses. This method 
   * `confirmsIntent`: Optional Boolean. Tests that the response asks Alexa to confirm the intent.
   * `hasAttributes`: Optional Object. Tests that the response contains the given attributes and values. Values can be strings or functions testing the value.
   * `hasCardTitle`: Optional String. Tests that the card sent by the response has the title specified.
-  * `hasCardContent`: Optional String. Tests that the card sent by the response has the title specified.
+	* `hasCardContent`: Optional String. Tests that the card sent by the response is a simple card and has the content specified.
+	* `hasCardContentLike`: Optional String. Tests that the card sent by the response is a simple card and contains the content specified.
+	* `hasCardText`: Optional String. Tests that the card sent by the response is a standard card and has the text specified.
+	* `hasCardTextLike`: Optional String. Tests that the card sent by the response is a standard card and contains the text specified.
+	* `hasSmallImageUrlLike`: Optional String. Tests that the card sent by the response is a standard card and has a small image URL containing the string specified.
+	* `hasLargeImageUrlLike`: Optional String. Tests that the card sent by the response is a standard card and has a large image URL containing the string specified.
   * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
   * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB. Values can be strings or functions testing the value.
   * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
