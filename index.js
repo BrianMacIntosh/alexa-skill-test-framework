@@ -454,8 +454,13 @@ module.exports = {
 					// adds values from withSessionAttributes to the session
 					if (currentItem.withSessionAttributes) {
 						var session = request.session.attributes;
-						for(var x in currentItem.withSessionAttributes) session[x] = currentItem.withSessionAttributes[x];
-					};
+
+						for (var newAttribute in currentItem.withSessionAttributes) {
+							if (typeof session[`${newAttribute}`] === "undefined") {
+								session[`${newAttribute}`] = currentItem.withSessionAttributes[`${newAttribute}`];
+							}
+						}
+					}
 					
 					var requestType = request.request.type;
 					if (requestType === "IntentRequest") {
