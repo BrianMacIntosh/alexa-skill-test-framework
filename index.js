@@ -456,8 +456,8 @@ module.exports = {
 						var session = request.session.attributes;
 
 						for (var newAttribute in currentItem.withSessionAttributes) {
-							if (typeof session[`${newAttribute}`] === "undefined") {
-								session[`${newAttribute}`] = currentItem.withSessionAttributes[`${newAttribute}`];
+							if (!session[newAttribute]) {
+								session[newAttribute] = currentItem.withSessionAttributes[newAttribute];
 							}
 						}
 					}
