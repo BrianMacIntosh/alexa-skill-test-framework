@@ -122,6 +122,7 @@ Tests the skill with a sequence of requests and expected responses. This method 
 	* `hasLargeImageUrlLike`: Optional String. Tests that the card sent by the response is a standard card and has a large image URL containing the string specified.
   * `withStoredAttributes`: Optional Object. The attributes to initialize the handler with. Used with DynamoDB mock
   * `storesAttributes`: Optional Object. Tests that the given attributes were stored in the DynamoDB. Values can be strings or functions testing the value.
+  * `withSessionAttributes`: Optional Object. The session attributes to initialize the an intent request with. Values can be strings, booleans, or integers.
   * `playsStream`: Optional Object. Tests that the AudioPlayer is used to play a stream.
   * `stopsStream`: Optional Boolean. Tests that the AudioPlayer is stopped.
   * `clearsQueue`: Optional String. Tests that the AudioPlayer clears the queue with the given clear behavior.
