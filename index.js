@@ -492,9 +492,7 @@ module.exports = {
 						var session = request.session.attributes;
 
 						for (var newAttribute in currentItem.withSessionAttributes) {
-							if (!session[newAttribute]) {
-								session[newAttribute] = currentItem.withSessionAttributes[newAttribute];
-							}
+							session[newAttribute] = currentItem.withSessionAttributes[newAttribute];
 						}
 					}
 					
