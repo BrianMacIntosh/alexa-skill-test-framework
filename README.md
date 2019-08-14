@@ -12,8 +12,12 @@ describe("AMAZON.HelpIntent into AMAZON.CancelIntent", function(){
 });
 ```
 
+# Other Versions
+
 **There is a new version of this framework, that is optimized for version 2 of the ask-sdk and is written in Typescript. You can find it on https://github.com/taimos/ask-sdk-test**  
 **This version will continue to exist, but new features might be in the other library first**
+
+There is a **Python** adaptation of the framework available at https://github.com/BananaNosh/py_ask_sdk_test.
 
 ## How To
 Install the package as a dev dependency with `npm install alexa-skill-test-framework --save-dev`.
