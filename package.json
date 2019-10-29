@@ -58,7 +58,7 @@
   "devDependencies": {
     "alexa-sdk": "^1.0.10",
     "ask-sdk": "^2.0.0",
-    "eslint": "^3.0.0",
+    "eslint": "^6.6.0",
     "mocha": "^3.2.0"
   }
 }
